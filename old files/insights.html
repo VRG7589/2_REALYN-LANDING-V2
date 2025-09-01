@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insights | Realyn.ai</title>
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-green': '#10B981',
+            'brand-blue': '#3B82F6',
+            'brand-logoblue': '#1A5CB2',
+            'brand-navy': '#1E3A8A',
+            'brand-light': '#F9FAFB',
+            'brand-darkgray': '#344054'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Global styles */
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Active nav link */
+    .nav-link.active {
+      color: #10B981;
+      background-color: rgba(16, 185, 129, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased">
+  <!-- NAVBAR -->
+  <nav class="fixed w-full z-50 bg-white backdrop-blur-md shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300">
+        <img src="assets/Logo.svg" alt="Logo" class="h-8 w-8 object-contain" />
+        <div class="text-2xl font-extrabold tracking-tight gradient-text">Realyn.ai</div>
+      </a>
+      <div class="hidden md:flex space-x-8 text-sm font-semibold">
+        <a href="index.html#use-cases" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md p-2 hover:bg-gray-50">Use Cases</a>
+        <a href="index.html#how-it-works" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md p-2 hover:bg-gray-50">How it Works</a>
+        <a href="index.html#About" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md p-2 hover:bg-gray-50">About</a>
+        <a href="insights.html" class="nav-link text-brand-green transition-all duration-300 rounded-md p-2 hover:bg-gray-50 active">Insights</a>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek?month=2025-06" target="_blank" class="bg-brand-green text-white px-4 py-2 rounded-md hover:bg-brand-green/90 transition-all duration-300">Book a Demo</a>
+        <a href="https://opsplanner-v1-client.onrender.com/login" target="_blank" class="border border-brand-green text-brand-green px-4 py-2 rounded-md hover:bg-brand-green/10 transition-all duration-300">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-4xl mx-auto px-6 pt-32 pb-20">
+  <h1 class="text-4xl font-extrabold mb-4 text-brand-navy">Why Promo Execution is Still Broken — and What Best-in-Class Looks Like in 2025</h1>
+  <p class="text-brand-darkgray text-base mb-6">June 2025 | Insights</p>
+
+  <p class="text-lg mb-6 text-brand-darkgray leading-relaxed">
+    The <strong>2025 Consumer Goods State of the Industry Report</strong> by the Promotion Optimization Institute (POI) has made one thing abundantly clear: <span class="font-semibold text-red-600">execution is the industry's weakest link</span>.
+  </p>
+  <p class="text-lg mb-6 text-brand-darkgray leading-relaxed">
+    Despite years of investment in digital transformation, most Consumer Packaged Goods (CPG) brands are still leaking <strong>4–7% of annual revenue</strong> due to poor campaign execution, disconnected planning, and misaligned teams.
+  </p>
+
+  <!--<img src="images/execution-broken.png" alt="Broken Execution Visual" class="rounded-lg shadow mb-8">-->
+
+  <h2 class="text-2xl font-bold mt-10 mb-4 text-brand-navy">The Pain is Real — and Growing</h2>
+  <p class="text-brand-darkgray leading-relaxed mb-6">
+    According to the POI report:
+  </p>
+  <ul class="list-disc ml-6 text-brand-darkgray mb-6 space-y-2">
+    <li><strong>61%</strong> of brands admit to ongoing struggles with promotion execution.</li>
+    <li><strong>38%</strong> blame these failures directly on a lack of accurate, real-time data and insights.</li>
+    <li><strong>&lt;25%</strong> measure success at the store or SKU level.</li>
+    <li>Spreadsheets and siloed systems still dominate workflows.</li>
+  </ul>
+
+  <!--<img src="images/promo-failure-data.png" alt="Promo Failure Stats" class="rounded-lg shadow mb-8"> -->
+
+  <p class="text-brand-darkgray leading-relaxed mb-6">
+    The result? Great plans fail at the last mile — whether it's inventory gaps, pricing errors, or poor targeting — and marketing dollars evaporate with no accountability.
+  </p>
+
+  <h2 class="text-2xl font-bold mt-10 mb-4 text-brand-navy">What's Missing: Real-Time Alignment</h2>
+  <p class="text-brand-darkgray leading-relaxed mb-6">
+    Most CPG planning still happens in silos. Trade teams, sales, marketing, and supply chain operate on disconnected timelines and data systems, leading to:
+  </p>
+  <ul class="list-disc ml-6 text-brand-darkgray mb-6 space-y-2">
+    <li>Missed uplift from planned promotions</li>
+    <li>Stockouts during peak campaigns</li>
+    <li>Inefficient spend allocation</li>
+    <li>Disappointment at the shelf — and in the P&L</li>
+  </ul>
+
+  <!-- <img src="images/siloed-teams.png" alt="Siloed Teams Illustration" class="rounded-lg shadow mb-8"> -->
+
+  <h2 class="text-2xl font-bold mt-10 mb-4 text-brand-navy">What Best-in-Class Looks Like</h2>
+  <p class="text-brand-darkgray leading-relaxed mb-6">
+    The POI report highlights a small but growing group of leaders that are breaking the cycle. These companies see exactly what the customer is looking at the store, on the website or in their messages. They :
+  </p>
+  <ul class="list-disc ml-6 text-brand-darkgray mb-6 space-y-2">
+    <li>✅ Align marketing, supply chain, and sales planning in real-time</li>
+    <li>✅ Use predictive analytics to simulate outcomes pre-launch</li>
+    <li>✅ Monitor execution quality at SKU × Store level live</li>
+    <li>✅ Empower frontline teams with alerts, recommendations and explanations not just reports</li>
+    <li>✅ Replace dashboards with dynamic, evolving control systems</li>
+  </ul>
+
+  <!-- <img src="images/best-in-class.png" alt="Best-in-Class Capabilities" class="rounded-lg shadow mb-8"> -->
+
+  <h2 class="text-2xl font-bold mt-10 mb-4 text-brand-navy">Enter Realyn: Your Execution Control Stack</h2>
+  <p class="text-brand-darkgray leading-relaxed mb-6">
+    At Realyn, we've built what the industry has been missing — a real-time execution platform that unifies marketing, operations, and finance under one intelligent control system.
+  </p>
+
+  <ul class="list-disc ml-6 text-brand-darkgray mb-6 space-y-2">
+    <li>🧠 <strong>Live Planning Contexts</strong>: SKU × Store × Channel expectations, always current</li>
+    <li>⚙️ <strong>AI-Powered Control Agents</strong>: Detect risks and trigger preventive workflows</li>
+    <li>📡 <strong>Execution Insights</strong>: Days ahead of traditional BI tools</li>
+    <li>🚀 <strong>Fast Deployment</strong>: Operational in 3–5 days</li>
+    <li>💰 <strong>Immediate ROI</strong>: Up to 90% waste reduction in 90 days</li>
+  </ul>
+
+   <!-- <img src="images/ops-planner-architecture.png" alt="Ops-Planner Architecture" class="rounded-lg shadow mb-8"> -->
+
+  <div class="bg-gradient-to-br from-brand-green/10 to-brand-blue/10 p-6 rounded-xl mt-10 border border-brand-green/20">
+    <p class="text-brand-navy text-lg font-semibold">The Future Belongs to the Fast and Aligned</p>
+    <p class="text-brand-navy leading-relaxed">
+      The 2025 POI report doesn't just highlight the problem — it shows what's possible. If your brand is ready to:
+    </p>
+    <ul class="list-disc ml-6 text-brand-navy mt-2 space-y-1">
+      <li>✅ Fix execution gaps before they hit the bottom line</li>
+      <li>✅ Align every team on one real-time truth</li>
+      <li>✅ Move from reactive firefighting to proactive control</li>
+    </ul>
+    <p class="mt-4">
+      👉 <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek?month=2025-06" target="_blank" class="text-brand-green hover:underline font-semibold">Schedule a Demo</a> to see how Realyn is helping CPG brands stay ahead of execution failures — and the competition.
+    </p>
+  </div>
+</main>
+
+  <!-- FOOTER -->
+  <footer class="text-center py-6 text-sm text-brand-darkgray">
+    <p>&copy; 2025 Realyn.ai — All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Function to handle active state of navigation links
+    function setActiveNavLink() {
+      const currentPath = window.location.pathname;
+      const currentHash = window.location.hash;
+      const navLinks = document.querySelectorAll('.nav-link');
+
+      navLinks.forEach(link => {
+        // Remove active class from all links
+        link.classList.remove('active');
+        
+        // Check if we're on the insights page
+        if (currentPath.includes('insights.html')) {
+          if (link.getAttribute('href') === 'insights.html') {
+            link.classList.add('active');
+          }
+        } else {
+          // For index.html pages, check the hash
+          if (link.getAttribute('href') === `index.html${currentHash}`) {
+            link.classList.add('active');
+          }
+        }
+      });
+    }
+
+    // Set active state on page load
+    document.addEventListener('DOMContentLoaded', setActiveNavLink);
+
+    // Update active state when hash changes
+    window.addEventListener('hashchange', setActiveNavLink);
+  </script>
+</body>
+</html>

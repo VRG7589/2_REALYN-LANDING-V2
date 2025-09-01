@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realyn.ai: The Growth GPS Every Brand Needs</title>
+  <meta name="description" content="Discover your top-performing zip codes with our customer concentration map. Analyze demographics, identify your 80/20 markets, and optimize your marketing spend for maximum ROI." />
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Assets/favicon.ico') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-green': '#10B981',
+            'brand-blue': '#3B82F6',
+            'brand-logoblue': '#1A5CB2',
+            'brand-navy': '#1E3A8A',
+            'brand-orange': '#FF5733',
+            'brand-red': '#FF0000',
+            'brand-yellow': '#FFD700',
+            'brand-light': '#F9FAFB',
+            'brand-darkgray': '#344054',
+            'brand-gray': '#6B7280'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-in-up': 'fade-in-up 0.8s ease-out both',
+            'fade-in': 'fade-in 0.5s ease-out both',
+            'slide-up': 'slide-up 0.5s ease-out both',
+            'scale-in': 'scale-in 0.3s ease-out both',
+          },
+          keyframes: {
+            'fade-in-up': {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            'fade-in': {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            'slide-up': {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            'scale-in': {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .text-elegant {
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    
+    .text-elegant-bold {
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+    
+    .hover-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .elegant-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .modern-button {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modern-button:hover {
+      transform: scale(1.02);
+    }
+    
+    .animate-fade-in-up {
+      animation: fade-in-up 0.8s ease-out both;
+    }
+    
+    .animate-fade-in {
+      animation: fade-in 0.5s ease-out both;
+    }
+    
+    .animate-slide-up {
+      animation: slide-up 0.5s ease-out both;
+    }
+    
+    .animate-scale-in {
+      animation: scale-in 0.3s ease-out both;
+    }
+    
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fade-in {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    
+    @keyframes slide-up {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes scale-in {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .section-padding {
+      padding: 4rem 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .section-padding {
+        padding: 2rem 1rem;
+      }
+    }
+
+    /* Filter Button Styles */
+    .filter-btn {
+      @apply px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-white/80 border border-white/20 hover:bg-white/20 hover:text-white hover:border-white/40;
+    }
+
+    .filter-btn.active {
+      @apply bg-white/30 text-white border-white/50 shadow-sm;
+    }
+
+    .filter-btn:hover {
+      @apply transform scale-105;
+    }
+
+    /* Filter Dropdown Styles */
+    .filter-dropdown {
+      @apply w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-800 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue;
+    }
+
+    .filter-dropdown option {
+      @apply bg-white text-gray-800 font-medium;
+    }
+
+    .filter-dropdown:hover {
+      @apply border-gray-400 shadow-sm;
+    }
+
+    /* Ensure dropdown text is visible on all browsers */
+    .filter-dropdown {
+      color: #1f2937 !important;
+      background-color: white !important;
+    }
+
+    .filter-dropdown option {
+      background-color: white !important;
+      color: #1f2937 !important;
+      font-weight: 500 !important;
+    }
+
+    /* For Firefox and other browsers that need explicit styling */
+    .filter-dropdown:-moz-focusring {
+      color: #1f2937;
+      text-shadow: none;
+    }
+
+    .filter-dropdown option:checked {
+      background-color: #3B82F6 !important;
+      color: white !important;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-gray-900 font-sans antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed w-full z-50 bg-white shadow-sm border-b border-gray-200/50">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300">
+        <img src="{{ url_for('static', filename='Assets/Logo.svg') }}" alt="Logo" class="h-8 w-8 object-contain" />
+        <div class="text-xl font-bold tracking-tight gradient-text">Realyn.ai</div>
+      </a>
+        
+      <div class="hidden md:flex space-x-6 text-sm font-medium">
+        <a href="#how-it-works" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">How It Works</a>
+        <a href="#insights" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Insights</a>
+        <a href="#pricing" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Pricing</a>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-green/90 transition-all duration-300 text-sm">Book a Demo</a>
+        <a href="https://opsplanner-v1-client.onrender.com" target="_blank" class="border border-brand-green text-brand-green px-4 py-2 rounded-lg hover:bg-brand-green/10 transition-all duration-300 text-sm">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-brand-green to-brand-blue text-white min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-12">
+    <div class="max-w-7xl mx-auto w-full">
+      <div class="text-center mb-8 mt-20">
+        <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl max-w-6xl mx-auto font-bold leading-tight mb-4 text-yellow-300">
+          Stop Betting on Guesswork<br> Navigate Growth with GPS Precision</h1>
+        <p class="text-base sm:text-lg max-w-4xl mx-auto text-white/95 leading-relaxed mb-4">
+          Connect your ads, pricing, and competition moves into one live demand map—so you know what drove that 42% growth in Austin while Atlanta underperformed, and what to do next.  
+        </p>
+      </div>
+    </div>
+  
+    <!-- Clean, narrow separator -->
+    <div class="w-16 h-0.5 bg-white/30 mx-auto mb-8"></div>
+    
+    <div class="max-w-7xl mx-auto w-full">
+      <div class="text-center mb-12 animate-fade-in-up">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white text-elegant-bold">
+         Start Here: Your Customer Concentration Map
+        </h2>
+        <p class="text-sm sm:text-base text-white/80 font-medium text-elegant">
+          Free Insights • Accurate & Up to Date • No Brand Data Required </p>
+      </div>
+      
+      <!-- Lead Magnet: Two Panel Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 max-w-7xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
+        
+        <!-- Left Panel: Demographic Filters (1/5 = 20% on desktop, full width on mobile) -->
+        <div class="lg:col-span-1 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-xl">
+          <h3 class="text-lg font-semibold mb-6 text-white text-elegant-bold">Target Market</h3>
+          
+          <!-- Gender Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Gender</label>
+            <select class="filter-dropdown w-full" data-filter="gender">
+              <option value="both">Both</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          
+          <!-- Ethnicity/Race Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Ethnicity/Race</label>
+            <select class="filter-dropdown w-full" data-filter="ethnicity">
+              <option value="all">All</option>
+              <option value="white">White</option>
+              <option value="black">Black</option>
+              <option value="hispanic">Hispanic</option>
+              <option value="native">Native</option>
+              <option value="asian">Asian</option>
+              <option value="pacific">Pacific</option>
+              <option value="others">Others</option>
+              <option value="multiple">Multiple</option>
+            </select>
+          </div>
+          
+          <!-- Age Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Age</label>
+            <select class="filter-dropdown w-full" data-filter="age">
+              <option value="all">All Ages</option>
+              <option value="under20">Under 20</option>
+              <option value="20-29">20-29</option>
+              <option value="30-39">30-39</option>
+              <option value="40-49">40-49</option>
+              <option value="50-59">50-59</option>
+              <option value="60plus">60+</option>
+            </select>
+          </div>
+          
+          <!-- Household Income Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Household Income</label>
+            <select class="filter-dropdown w-full" data-filter="income">
+              <option value="all">All Incomes</option>
+              <option value="under50k">Under $50K</option>
+              <option value="50k-75k">$50K-$75K</option>
+              <option value="75k-100k">$75K-$100K</option>
+              <option value="100k-150k">$100K-$150K</option>
+              <option value="150k-200k">$150K-$200K</option>
+              <option value="over200k">Over $200K</option>
+            </select>
+          </div>
+          
+          <!-- Yearly Consumption Input -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Yearly Consumption Value</label>
+            <div class="flex items-center gap-1">
+              <span class="text-white/80 text-sm">$</span>
+              <input type="number" id="yearly-consumption" value="100" placeholder="100" 
+                     class="filter-dropdown flex-1 min-w-0">
+              <span class="text-white/80 text-xs">per capita</span>
+            </div>
+          </div>
+          
+          <!-- Generate Insights Button -->
+          <button id="generate-insights" class="w-full bg-gradient-to-r from-yellow-300 to-yellow-400 text-brand-darkgray py-3 px-4 rounded-xl font-semibold text-sm hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:from-yellow-200 hover:to-yellow-300">
+            Refresh Data
+          </button>
+        </div>
+        
+        <!-- Right Panel: US Map (4/5 = 80% on desktop, full width on mobile) -->
+        <div class="lg:col-span-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 lg:p-8 border border-white/20 shadow-xl flex flex-col min-h-[500px] lg:min-h-[600px]">
+          
+          <!-- Summary Metrics Section -->
+          <div id="summary-metrics" class="mb-6 p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30 hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <!-- Market Size -->
+              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="market-size">$0</div>
+                <div class="text-xs text-brand-gray font-medium">Total Market Size</div>
+                <div class="text-xs text-brand-gray/70 mt-1">Addressable market value</div>
+              </div>
+              
+              <!-- Total Population -->
+              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="total-population">0M</div>
+                <div class="text-xs text-brand-gray font-medium">Total Population</div>
+                <div class="text-xs text-brand-gray/70 mt-1">People matching your criteria</div>
+              </div>
+              
+              <!-- Top Zip Codes for 50% -->
+              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="top-zips-50">0</div>
+                <div class="text-xs text-brand-gray font-medium">50% Concentration</div>
+                <div class="text-xs text-brand-gray/70 mt-1">Zip codes with 50% of population</div>
+              </div>
+              
+              <!-- Top Zip Codes for 80% -->
+              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
+                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="top-zips-80">0</div>
+                <div class="text-xs text-brand-gray font-medium">80% Concentration</div>
+                <div class="text-xs text-brand-gray/70 mt-1">Zip codes with 80% of population</div>
+              </div>
+            </div>
+          </div>
+          
+          <div id="map-container" class="w-full h-full rounded-xl overflow-hidden relative flex-1">
+            <div id="map" class="w-full h-full"></div>
+            <div id="map-loading" class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center">
+              <div class="text-center bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/30 max-w-md mx-4">
+                <h3 class="text-lg font-semibold text-brand-darkgray mb-2">Loading Market Data</h3>
+                <p class="text-brand-gray text-sm font-medium">Initializing map...</p>
+              </div>
+            </div>
+            <div id="map-placeholder" class="absolute inset-0 bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <div class="text-center">
+                <div class="w-24 lg:w-32 h-24 lg:h-32 bg-white/20 rounded-full flex items-center justify-center mb-4 lg:mb-6 mx-auto">
+                  <svg class="w-12 lg:w-16 h-12 lg:h-16 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-13 7l9-4.5m9 4.5l-9 4.5"></path>
+                  </svg>
+                </div>
+                <h3 class="text-xl lg:text-2xl font-semibold mb-3 lg:mb-4 text-white text-elegant-bold">Interactive US Market Map</h3>
+                <p class="text-white/80 text-elegant mb-4 lg:mb-6 max-w-md mx-auto text-sm lg:text-base">
+                  Select your demographic filters to see market opportunities highlighted across the United States
+                </p>
+                <div class="bg-white/20 rounded-xl p-4 lg:p-6 w-full max-w-2xl mx-auto">
+                  <p class="text-xs lg:text-sm text-white/70 text-elegant leading-relaxed">
+                    This interactive map will visualize the top 1000 zip codes matching your selected criteria, showing market concentration, 
+                    growth opportunities, and demographic insights across different regions.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="relative bg-white text-brand-navy section-padding overflow-hidden">
+    <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+      <h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+        You Are Making Million-Dollar Decisions on Stale Reports
+      </h2>
+      <p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+        By the time your team pulls data from different sources, wrangle spreadsheets, and build slide decks, the market's already moved. 
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Campaign Attribution Crisis</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Did that 20% sales lift come from your new campaign—or just category-wide growth? Which regions should you scale to next?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Channel Cannibalization</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Are your DTC promotions stealing customers from retail partners, or actually growing the pie?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Competitive Blindness</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                A competitor just slashed prices 15%. Where will you lose share, and where can you still hold margin?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Stockout Roulette</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Which SKUs are about to go OOS—and in which markets? Your forecasts are failing you when you need them most.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 p-5 bg-gradient-to-r from-brand-green/10 to-brand-blue/10 rounded-xl border border-brand-green/20">
+        <p class="text-base leading-relaxed max-w-3xl mx-auto text-brand-navy font-medium text-elegant">
+          The reality? Each deep-dive takes 2–3 weeks, costing millions in lost growth, even when you have all the data to get answers and clarity instantly.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="relative bg-gray-100 text-brand-navy section-padding overflow-hidden">
+    <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+      <h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+        The Growth GPS Every Brand Needs 
+      </h2>
+      <p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+        Because its not enough to know just the destination. You need live traffic, directions, and road conditions to navigate efficiently. Realyn maps the impact of your ads, pricing, and competitive moves on demand in real-time so you can navigate your growth efficiently.
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Maximize ROI </h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Optimize spend with zip-code precision. Stop wasting budget on underperforming regions and double down on what works.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Protect Margins</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Give discounts only when necessary. Know exactly when and where to defend against competitive pressure.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Prevent Stockouts</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Get 2–4 week early warnings on inventory risks. Keep your bestsellers in stock when demand spikes.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="hover-card elegant-card p-5 rounded-xl text-left">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-2 text-brand-navy">Lead the Market</h3>
+              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+                Stay several steps ahead of the competition. Anticipate competitor moves and market shifts instead of reacting to them.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+    
+  <!-- Founder Quote -->
+  <section id="About" class="section-padding bg-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold mb-6 text-center text-elegant-bold">Built by Amazon Veterans Who've Seen the Waste</h2>
+      <div class="elegant-card p-6 rounded-xl">
+        <div class="flex items-center gap-6">
+          <!-- Left side - Image placeholder -->
+          <div class="w-24 flex-shrink-0">
+            <img src="{{ url_for('static', filename='Assets/amazon-150.png') }}" alt="Amazon Logo" class="w-20 h-20 object-contain">
+          </div>
+          
+          <!-- Right side - Content (80% width) -->
+          <div class="flex-1">
+            <div class="flex items-center justify-center mb-4">
+              <!-- <div class="w-20 h-20 rounded-full overflow-hidden">
+                <img src="{{ url_for('static', filename='Assets/vivek.jpeg') }}" alt="Vivek Reddy Goli" class="w-full h-full object-cover">
+              </div> -->
+            </div>
+            <blockquote class="text-sm text-gray-800 mb-3 italic text-elegant">
+              "At Amazon, I saw a top CPG brand lose millions on a single promotion because their data was two weeks old—they missed a competitor's price drop in their key market. It wasn't a strategy problem; it was a speed problem. I built Realyn to give every brand the live intelligence they need to move at the speed of the market."
+            </blockquote>
+            <div class="flex items-center justify-center gap-3 mb-3">
+              <p class="font-semibold text-gray-700 text-sm">— Vivek Reddy Goli, CEO & Co-founder</p>
+              <a href="https://www.linkedin.com/in/vivekreddygoli/" target="_blank" class="text-brand-navy hover:text-brand-green transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+            </div>
+            <div class="mt-3 text-xs text-gray-600 text-center">
+              <p>Amazon Product & Engineering Leader • 10+ years building enterprise systems</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+      
+    <!-- CTA -->
+    <section class="section-padding bg-gradient-to-r from-brand-green to-brand-blue text-white">
+      <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-elegant-bold">Ready to See Realyn in Action?</h2>
+        <p class="text-base mb-6 text-elegant">Take the first step towards transforming your marketing effectiveness today.</p>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="modern-button bg-white text-brand-navy px-8 py-3 rounded-xl font-semibold hover:bg-yellow-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Book Your Demo
+        </a>
+      </div>
+      
+      <div class="mt-6 border-t border-white/20 pt-8 text-center">
+        <p class="text-white/70 text-sm text-elegant">
+          © 2024 Realyn.ai. All rights reserved.
+        </p>
+      </div>
+    </section>
+  </body>
+  
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+  
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+  
+    // Observe all animated elements
+    document.querySelectorAll('.animate-fade-in-up, .animate-fade-in, .animate-slide-up, .animate-scale-in').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      observer.observe(el);
+    });
+  </script>
+  <!-- Lead Magnet JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize filter functionality
+      const filterDropdowns = document.querySelectorAll('.filter-dropdown');
+      const generateButton = document.getElementById('generate-insights');
+      
+      // Handle filter dropdown changes
+      filterDropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', function() {
+          const filterType = this.dataset.filter;
+          const filterValue = this.value;
+          
+          // Log the filter change (for now)
+          console.log(`Filter changed: ${filterType} = ${filterValue}`);
+        });
+      });
+      
+      // Handle generate insights button
+      generateButton.addEventListener('click', function() {
+        // Collect all filter values
+        const activeFilters = {};
+        document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
+          const filterType = dropdown.dataset.filter;
+          const filterValue = dropdown.value;
+          activeFilters[filterType] = filterValue;
+        });
+        
+        console.log('Generating insights with filters:', activeFilters);
+        
+        // Map visualization is handled by the map component
+        // No alert dialog needed
+      });
+    });
+  </script>
+  <!-- MapLibre GL JS -->
+  <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
+  <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
+  
+  <!-- Map Component JavaScript -->
+  <script src="{{ url_for('static', filename='map-component.js') }}"></script>
+  </html>

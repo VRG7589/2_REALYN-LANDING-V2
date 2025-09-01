@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realyn.ai: The Growth GPS for Consumer Brands.</title>
+  <meta name="description" content="Realyn connects marketing, pricing, promotions, and sales data at ZIP × demographic grain—showing where your customers are under‑served, what it costs to reach them, and how to spend smarter for faster growth." />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D8B3XRWSWJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D8B3XRWSWJ'); // Replace with your GA4 measurement ID
+
+    // Custom event tracking
+    function trackEvent(eventName, eventParams = {}) {
+      gtag('event', eventName, eventParams);
+      // Add console log for testing
+      console.log('Event tracked:', eventName, eventParams);
+    }
+
+    // Test tracking function
+    function testTracking() {
+      trackEvent('test_event', {
+        test_param: 'test_value',
+        timestamp: new Date().toISOString()
+      });
+      alert('Test event sent! Check console and GA4 real-time reports.');
+    }
+
+    // Track page view
+    document.addEventListener('DOMContentLoaded', () => {
+      trackEvent('page_view', {
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: window.location.pathname
+      });
+    });
+
+    // Track time on page
+    let startTime = Date.now();
+    window.addEventListener('beforeunload', () => {
+      const timeSpent = Math.round((Date.now() - startTime) / 1000);
+      trackEvent('time_spent', {
+        seconds: timeSpent
+      });
+    });
+
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-green': '#10B981',
+            'brand-blue': '#3B82F6',
+            'brand-logoblue': '#1A5CB2',
+            'brand-navy': '#1E3A8A',
+            'brand-orange': '#FF5733',
+            'brand-red': '#FF0000',
+            'brand-yellow': '#FFD700',
+            'brand-light': '#F9FAFB',
+            'brand-darkgray': '#344054',
+            'brand-gray': '#6B7280'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-in-up': 'fade-in-up 0.8s ease-out both',
+            'fade-in': 'fade-in 0.5s ease-out both',
+            'slide-up': 'slide-up 0.5s ease-out both',
+            'scale-in': 'scale-in 0.3s ease-out both',
+          },
+          keyframes: {
+            'fade-in-up': {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            'fade-in': {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            'slide-up': {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            'scale-in': {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          }
+        }
+      }
+    };
+
+    // Initialize EmailJS with your public key
+    (function() {
+      emailjs.init("dIb8RX869g_-a22PL");
+    })();
+  </script>
+  <style>
+    /* Global styles */
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+
+    /* Modern card hover effects */
+    .hover-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Smooth transitions */
+    .transition-all {
+      transition-property: all;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 300ms;
+    }
+
+    /* Modern button styles */
+    .modern-button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .modern-button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+    .modern-button:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Glass morphism effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Active nav link */
+    .nav-link.active {
+      color: #10B981;
+      background-color: rgba(16, 185, 129, 0.1);
+    }
+
+    /* Elegant typography */
+    .text-elegant {
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .text-elegant-bold {
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    /* Professional spacing */
+    .section-padding {
+      padding: 4rem 1.5rem;
+    }
+
+    /* Refined card styling */
+    .elegant-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Rotating qualifier animation */
+    #rotating-qualifier {
+      transition: all 0.5s ease-in-out;
+      animation-duration: 0.5s;
+      animation-fill-mode: both;
+    }
+
+    @keyframes fadeOutUp {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-out-up {
+      animation-name: fadeOutUp;
+    }
+
+    .fade-in-down {
+      animation-name: fadeInDown;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-gray-900 font-sans antialiased">
+
+  <!-- Navbar -->
+  <nav class="fixed w-full z-50 bg-white shadow-sm border-b border-gray-200/50">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300">
+          <img src="assets/Logo.svg" alt="Logo" class="h-8 w-8 object-contain" />
+        <div class="text-xl font-bold tracking-tight gradient-text">Realyn.ai</div>
+      </a>
+      <div class="hidden md:flex space-x-6 text-sm font-medium">
+        <a href="#use-cases" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Use Cases</a>
+        <a href="#how-it-works" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">How it Works</a>
+        <a href="#About" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">About</a>
+        <a href="insights.html" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Insights</a>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-green/90 transition-all duration-300 text-sm">Book a Demo</a>
+        <a href="https://opsplanner-v1-client.onrender.com" target="_blank" class="border border-brand-green text-brand-green px-4 py-2 rounded-lg hover:bg-brand-green/10 transition-all duration-300 text-sm">Login</a>
+      </div>
+    </div>
+  </nav>
+
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-brand-green to-brand-blue text-white min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-12 overflow-hidden" aria-labelledby="hero-heading">
+  <div class="max-w-7xl mx-auto w-full">
+    <div class="text-center mb-12">
+	<p class="text-xl sm:text-2xl font-medium uppercase tracking-wider text-white/90 mt-12 mb-4">
+        Growth GPS for Consumer Brands
+      </p>
+      <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl max-w-6xl mx-auto font-bold leading-tight mb-4 text-yellow-300">
+        Stop Wasting Ad Spend on Wrong Neighborhoods
+      </h1>
+
+      <p class="text-base sm:text-lg max-w-4xl mx-auto text-white/95 leading-relaxed mb-4">
+        Ad platforms optimize broadly. We cut through the noise to show which neighborhoods in Austin fuel growth — and which in Atlanta drain your budget.</p>
+
+      <div class="flex justify-center gap-4 flex-wrap mb-2">
+        <a href="/ZipInsights.html"
+           class="inline-flex items-center justify-center px-8 py-4 rounded-xl font-semibold text-base sm:text-lg bg-white text-brand-navy shadow-lg transition transform hover:scale-[1.02] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white/80">
+          See Where Your Customers Are →
+        </a>
+      </div>
+
+      <p class="text-sm sm:text-base text-white/80 font-medium">
+        Free insights • No brand data required
+      </p>
+    </div>
+
+    <!-- Product Walkthrough Video in Laptop Frame -->
+    <div class="flex justify-center">
+      <div class="relative laptop-frame">
+        <div class="laptop-screen">
+          <video 
+            class="w-full h-full object-cover rounded-lg"
+            autoplay 
+            muted 
+            loop 
+            playsinline
+            <source src="assets/ZipWalkThrough.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gentle motion that respects reduced motion -->
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      #hero-heading { animation: fadeUp .6s ease-out both; }
+      [aria-labelledby="hero-heading"] p { animation: fadeUp .7s ease-out both; }
+      .laptop-frame { animation: fadeUp .8s ease-out both; }
+      @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    }
+
+    .laptop-frame {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      height: 400px;
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 
+        0 20px 40px rgba(0,0,0,0.3),
+        inset 0 2px 0 rgba(255,255,255,0.1),
+        inset 0 -2px 0 rgba(0,0,0,0.5);
+    }
+
+    .laptop-screen {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #333;
+    }
+
+    .laptop-frame::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: #444;
+      border-radius: 2px;
+    }
+
+    .laptop-frame::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 8px;
+      background: #1a1a1a;
+      border-radius: 4px;
+    }
+  </style>
+</section>
+
+	
+
+	<!-- Problem Section -->
+	<section class="relative bg-white text-brand-navy section-padding overflow-hidden">
+	  <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+		<h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+		  Your Team Is Always Fighting Fires—Instead of Preventing Them 
+		</h2>
+		<p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+		  By the time your team pulls data, wrangle spreadsheets, and build slide decks, the market's already moved. You're making million-dollar decisions based on stale insights. 
+		</p>
+
+		<div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Campaign Attribution Crisis</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Did that 20% sales lift come from your new campaign—or just category-wide growth? Which regions should you scale to next?
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Channel Cannibalization</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Are your DTC promotions stealing customers from retail partners, or actually growing the pie?
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Competitive Blindness</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  A competitor just slashed prices 15%. Where will you lose share, and where can you still hold margin?
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Stockout Roulette</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Which SKUs are about to go OOS—and in which markets? Your forecasts are failing you when you need them most.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		</div>
+
+		<div class="mt-10 p-5 bg-gradient-to-r from-brand-green/10 to-brand-blue/10 rounded-xl border border-brand-green/20">
+		  <p class="text-base leading-relaxed max-w-3xl mx-auto text-brand-navy font-medium text-elegant">
+			The reality? Each deep-dive takes 2–3 weeks and zip-code-level granularity to be useful. You need answers in hours, not weeks.
+		  </p>
+		</div>
+	  </div>
+	</section>
+	
+  <!-- Features / What It Automates Section -->
+	<section id="use-cases" class="relative bg-gray-100 text-brand-navy section-padding overflow-hidden">
+	  <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+		<h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+		  All the Insights You Wish You Had—<br class="hidden md:inline-block" />Delivered Automatically, Every Day.
+		</h2>
+		<p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+		  Realyn connects your sales, marketing, inventory, and competitive data into a live intelligence engine that answers your biggest questions—before you even ask them.
+		</p>
+
+		<div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Campaign Co-Pilot</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Tracks true incremental lift across DTC, retail, and marketplaces—with zip-code precision. Showing which campaigns drive new customers vs. just shift channels.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Regional Navigator</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Drills into sales drivers by geography, SKU, retailer, and campaign. Identifies your strongest markets and biggest leaks in real-time.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Inventory Sentinel</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Gives early warnings on stockout risks based on demand velocity, forecast accuracy, and campaign performance—before you lose sales.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Launch Tracker</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Monitors if your new product launch is winning or failing. Suggestions to course-correct while you still can.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Competitive Scout</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Monitors competitor pricing, promotions, and availability across all channels. Allowing you to react strategically—not reactively.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Forecast Analyst</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Analyzes why your forecasts missed—marketing spikes, stockouts, seasonal shifts, or competitive actions.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</section>
+
+    <!-- Benefits Section -->
+	<section class="relative bg-white text-brand-navy section-padding overflow-hidden">
+	  <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+		<h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+		  Transform Scattered Data Into Strategic Advantage
+		</h2>
+		<p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+      Eliminate weeks of manual analysis. Let your analysts focus on strategy—not data wrangling.
+		</p>
+
+		<div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Maximize ROI</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Optimize spend with zip-code precision. Stop wasting budget on underperforming regions and double down on what works.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Protect Margins</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Give discounts only when necessary. Know exactly when and where to defend against competitive pressure.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Prevent Stockouts</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Get 2–4 week early warnings on inventory risks. Keep your bestsellers in stock when demand spikes.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Lead the Market</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Stay several steps ahead of the competition. Anticipate competitor moves and market shifts instead of reacting to them.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</section>
+
+	<!-- How It Works Section -->
+	<section id="how-it-works" class="relative bg-gray-100 text-brand-navy section-padding overflow-hidden">
+	  <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+		<h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+		  How Realyn Works
+		</h2>
+		<p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+		  Realyn's proprietary <strong class="text-brand-green">Demand Response Graph</strong> connects every campaign, sale, social post, and trend to live context at the SKU × Zip level granularity.  
+		  This powers a true bottoms-up view of your business, so you can predict and act on what's happening, where, and why.
+		</p>
+
+		<div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">40+ Native Integrations</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Instantly connect Shopify, Amazon, Meta, Google, TikTok, NetSuite, and more—no data team required.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">AI Driven Automation</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Always-on agents forecast sales, refresh data, and monitor campaign impact—maintaining live context at the SKU × Zip level.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Customizable Intelligence</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Set your strategic priorities—ROI, customer acquisition, cash flow, inventory turns—and Realyn tracks the impact of every action.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		  <div class="hover-card elegant-card p-5 rounded-xl text-left">
+			<div class="flex items-start gap-4">
+			  <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+				<svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+				</svg>
+			  </div>
+			  <div>
+				<h3 class="text-base font-semibold mb-2 text-brand-navy">Enterprise Security</h3>
+				<p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+				  Robust access controls and permissions mirror your RACI matrix—ensuring the right people see the right data.
+				</p>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</section>
+	
+	<!-- Founder Quote -->
+  <section id="About" class="section-padding bg-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold mb-6 text-center text-elegant-bold">Built by Amazon Veterans Who've Seen the Waste</h2>
+      <div class="elegant-card p-6 rounded-xl">
+        <div class="flex items-center gap-6">
+          <!-- Left side - Image placeholder -->
+          <div class="w-24 flex-shrink-0">
+            <img src="assets/amazon-150.png" alt="Amazon Logo" class="w-20 h-20 object-contain">
+          </div>
+          
+          <!-- Right side - Content (80% width) -->
+          <div class="flex-1">
+            <div class="flex items-center justify-center mb-4">
+             <!-- <div class="w-20 h-20 rounded-full overflow-hidden">
+                <img src="assets/vivek.jpeg" alt="Vivek Reddy Goli" class="w-full h-full object-cover">
+              </div> -->
+            </div>
+            <blockquote class="text-sm text-gray-800 mb-3 italic text-elegant">
+              "If you're still reacting to demand, you're already behind. At Amazon, I watched brands lose millions by moving too slow. I built Realyn so CPG teams can execute promos with the speed and precision today's market demands."
+            </blockquote>
+            <div class="flex items-center justify-center gap-3 mb-3">
+              <p class="font-semibold text-gray-700 text-sm">— Vivek Reddy Goli, CEO & Co-founder</p>
+              <a href="https://www.linkedin.com/in/vivekreddygoli/" target="_blank" class="text-brand-navy hover:text-brand-green transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+            </div>
+            <div class="mt-3 text-xs text-gray-600 text-center">
+              <p>Amazon Product & Engineering Leader • 10+ years building enterprise systems</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+	
+	<!-- CTA -->
+	<section class="section-padding bg-gradient-to-r from-brand-green to-brand-blue text-white">
+	  <div class="max-w-5xl mx-auto text-center">
+		<h2 class="text-2xl md:text-3xl font-bold mb-4 text-elegant-bold">Ready to See Realyn in Action?</h2>
+		<p class="text-base mb-6 text-elegant">Take the first step towards transforming your marketing effectiveness today.</p>
+		<a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="modern-button bg-white text-brand-navy px-8 py-3 rounded-xl font-semibold hover:bg-yellow-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+		  Book Your Demo
+		</a>
+	  </div>
+	</section>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+		  const carousel = document.getElementById('alertCarousel');
+		  if (carousel) {
+			const cards = carousel.querySelectorAll('.alert-card');
+			const dots = carousel.querySelectorAll('.carousel-dot');
+			let currentIndex = 0;
+			let intervalId;
+	
+			function showCard(index) {
+			  // Hide all cards
+			  cards.forEach(card => card.classList.add('hidden'));
+			  // Show the target card with a fade-in effect
+			  cards[index].classList.remove('hidden');
+			  cards[index].classList.add('animate-fade-in');
+	
+			  // Update active dot
+			  dots.forEach(dot => {
+				dot.classList.remove('bg-white');
+				dot.classList.add('bg-white/50');
+			  });
+			  dots[index].classList.remove('bg-white/50');
+			  dots[index].classList.add('bg-white');
+			  currentIndex = index;
+			}
+	
+			function nextCard() {
+			  let nextIndex = (currentIndex + 1) % cards.length;
+			  showCard(nextIndex);
+			}
+	
+			function startCarousel() {
+			  intervalId = setInterval(nextCard, 5000); // Change card every 5 seconds
+			}
+	
+			function stopCarousel() {
+			  clearInterval(intervalId);
+			}
+	
+			// Event listeners for dots
+			dots.forEach(dot => {
+			  dot.addEventListener('click', () => {
+				stopCarousel(); // Stop auto-play on manual interaction
+				showCard(parseInt(dot.dataset.index));
+				startCarousel(); // Optional: restart carousel after manual click
+			  });
+			});
+	
+			// Event listeners for mouse hover
+			carousel.addEventListener('mouseenter', stopCarousel);
+			carousel.addEventListener('mouseleave', startCarousel);
+	
+			// Initial setup
+			showCard(0);
+			startCarousel();
+		  }
+
+		  // Rotating qualifier functionality
+		  const qualifierElement = document.getElementById('rotating-qualifier');
+		  if (qualifierElement) {
+			const qualifiers = ['smartest', 'reliable', 'strategic', 'omniscient', 'proactive', 'versatile'];
+			let currentQualifierIndex = 0;
+
+			function rotateQualifier() {
+			  // Add fade out animation
+			  qualifierElement.classList.add('fade-out-up');
+			  
+			  setTimeout(() => {
+				// Change text after fade out completes
+				currentQualifierIndex = (currentQualifierIndex + 1) % qualifiers.length;
+				qualifierElement.textContent = qualifiers[currentQualifierIndex];
+				
+				// Remove fade out and add fade in
+				qualifierElement.classList.remove('fade-out-up');
+				qualifierElement.classList.add('fade-in-down');
+				
+				setTimeout(() => {
+				  // Remove fade in class after animation completes
+				  qualifierElement.classList.remove('fade-in-down');
+				}, 500);
+			  }, 250); // Half of animation duration for text change
+			}
+
+			// Start rotating qualifiers every 2 seconds
+			setInterval(rotateQualifier, 2000);
+		  }
+		});
+	</script>
+</body>
+</html>

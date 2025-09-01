@@ -1,0 +1,15 @@
+{
+  "name": "2_realyn-landing-v2",
+  "version": "1.0.0",
+  "description": "A modern, professional landing page for Realyn.ai, a customer concentration analysis platform that helps businesses optimize marketing spend using zip code-level demographic data. Built with modern web technologies and a Flask backend for data processing.",
+  "main": "map-component.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^4.1.12"
+  }
+}

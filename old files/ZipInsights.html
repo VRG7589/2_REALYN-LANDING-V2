@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zip-Level Market Insights | Realyn.ai</title>
+  <meta name="description" content="Discover your total addressable market with zip-code precision. Analyze demographics, calculate market size, and identify top opportunity areas." />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+  
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D8B3XRWSWJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-D8B3XRWSWJ');
+
+    function trackEvent(eventName, eventParams = {}) {
+      gtag('event', eventName, eventParams);
+      console.log('Event tracked:', eventName, eventParams);
+    }
+
+    // Track page view
+    document.addEventListener('DOMContentLoaded', () => {
+      trackEvent('page_view', {
+        page_title: document.title,
+        page_location: window.location.href,
+        page_path: window.location.pathname
+      });
+    });
+
+    // Initialize EmailJS
+    (function() {
+      emailjs.init("dIb8RX869g_-a22PL");
+    })();
+    
+    // Email forwarding configuration
+    const FORWARD_EMAIL = 'vivek@realyn.ai';
+
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-green': '#10B981',
+            'brand-blue': '#3B82F6',
+            'brand-logoblue': '#1A5CB2',
+            'brand-navy': '#1E3A8A',
+            'brand-orange': '#FF5733',
+            'brand-red': '#FF0000',
+            'brand-yellow': '#FFD700',
+            'brand-light': '#F9FAFB',
+            'brand-darkgray': '#344054',
+            'brand-gray': '#6B7280'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-in-up': 'fade-in-up 0.8s ease-out both',
+            'fade-in': 'fade-in 0.5s ease-out both',
+            'slide-up': 'slide-up 0.5s ease-out both',
+            'scale-in': 'scale-in 0.3s ease-out both',
+          },
+          keyframes: {
+            'fade-in-up': {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            'fade-in': {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            'slide-up': {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            'scale-in': {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    .hover-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .elegant-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modern-button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .modern-button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+    .modern-button:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .loading-spinner {
+      border: 2px solid #f3f4f6;
+      border-top: 2px solid #10B981;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin: 0.75rem 0;
+      font-size: 0.875rem;
+    }
+
+    .success-message {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin: 0.75rem 0;
+      font-size: 0.875rem;
+      animation: slideInDown 0.3s ease-out;
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .faq-toggle {
+      transition: all 0.2s ease;
+    }
+    .faq-toggle:hover {
+      background-color: rgba(16, 185, 129, 0.05);
+    }
+    .faq-toggle span {
+      transition: transform 0.3s ease;
+    }
+    .faq-content {
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    /* Map tooltip styles */
+    #mapTooltip {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      line-height: 1.4;
+      max-width: 200px;
+      word-wrap: break-word;
+    }
+
+    /* State hover effects */
+    .state-path:hover {
+      cursor: pointer;
+    }
+
+    /* Map container responsive sizing */
+    #mapContainer {
+      min-height: 300px;
+      height: 100%;
+    }
+
+    #mapContainer svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Panel height consistency */
+    .panel-container {
+      height: 700px;
+      min-height: 700px;
+    }
+
+    @media (max-width: 1024px) {
+      .panel-container {
+        height: auto;
+        min-height: 600px;
+      }
+    }
+
+    /* Ensure proper flex behavior */
+    .flex-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .flex-panel > * {
+      flex-shrink: 0;
+    }
+
+    .flex-panel > .flex-1 {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Table slide styling */
+    #tableSlide .overflow-auto,
+    #zipSlide .overflow-auto {
+      scrollbar-width: thin;
+      scrollbar-color: #CBD5E1 #F1F5F9;
+    }
+
+    #tableSlide .overflow-auto::-webkit-scrollbar,
+    #zipSlide .overflow-auto::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #tableSlide .overflow-auto::-webkit-scrollbar-track,
+    #zipSlide .overflow-auto::-webkit-scrollbar-track {
+      background: #F1F5F9;
+      border-radius: 3px;
+    }
+
+    #tableSlide .overflow-auto::-webkit-scrollbar-thumb,
+    #zipSlide .overflow-auto::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 3px;
+    }
+
+    #tableSlide .overflow-auto::-webkit-scrollbar-thumb:hover,
+    #zipSlide .overflow-auto::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+  <!-- Navbar -->
+  <nav class="fixed w-full z-50 bg-white shadow-sm border-b border-gray-200/50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300">
+        <img src="assets/Logo.svg" alt="Logo" class="h-7 w-7 object-contain" />
+        <div class="text-lg font-bold tracking-tight gradient-text">Realyn.ai</div>
+      </a>
+      <div class="hidden md:flex space-x-4 text-sm font-medium">
+        <a href="index.html" class="text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Home</a>
+        <a href="index.html#use-cases" class="text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Use Cases</a>
+        <a href="index.html#how-it-works" class="text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">How it Works</a>
+        <a href="insights.html" class="text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Insights</a>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek?month=2025-06" target="_blank" class="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-green/90 transition-all duration-300 text-sm">Book a Demo</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-brand-green to-brand-blue text-white pt-24 pb-12 px-4 overflow-hidden">
+    <div class="max-w-5xl mx-auto text-center animate-fade-in-up">
+      <h1 class="text-2xl md:text-3xl font-semibold leading-tight mb-4 text-yellow-300 text-elegant-bold">
+        Strategic Market Insights by ZIP Code
+      </h1>
+      <p class="text-base mb-3 max-w-2xl mx-auto leading-relaxed text-elegant">
+        Discover your best opportunities with demographic data from 33,000+ ZIP codes. See top 1000 locations as interactive map pins.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- Main Application -->
+  <section class="py-8 px-4 bg-gray-100" >
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[28%_72%] gap-4 lg:gap-6 items-start">
+        
+        <!-- Input Panel -->
+        <div class="elegant-card p-6 rounded-lg panel-container flex-panel">  
+          <!-- Demographics Section -->
+          <div class="mb-6 flex-shrink-0">
+            <h3 class="text-base font-semibold mb-3 text-brand-navy flex items-center gap-2">
+              Target Demographics
+            </h3>
+            
+            <!-- Gender -->
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <select id="gender" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all">
+                <option value="women">Women</option>
+                <option value="men">Men</option>
+                <option value="all">All Genders</option>
+              </select>
+            </div>
+
+            <!-- Race/Ethnicity -->
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Race/Ethnicity</label>
+              <select id="ethnicity" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all">
+                <option value="hispanic">Hispanic/Latino</option>
+                <option value="white">White</option>
+                <option value="black">Black/African American</option>
+                <option value="asian">Asian</option>
+                <option value="other">Other</option>
+                <option value="all">All Ethnicities</option>
+              </select>
+            </div>
+
+            <!-- Age Range -->
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Age Range</label>
+              <select id="ageRange" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all">
+                <option value="all">All Ages</option>
+				<option value="20s">20-29 years</option>
+                <option value="30s">30-39 years</option>
+                <option value="40s">40-49 years</option>
+                <option value="50s">50+ years</option>
+                <option value="25-35">25-35 years (spans decades)</option>
+              </select>
+            </div>
+
+            <!-- Household Income -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Household Income</label>
+              <select id="income" class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all">
+                <option value="all">All Income Levels</option>
+				<option value="100k_plus">$100,000+</option>
+                <option value="75k_100k">$75,000 - $100,000</option>
+                <option value="50k_75k">$50,000 - $75,000</option>
+                <option value="below_50k">Below $50,000</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Business Metrics Section -->
+          <div class="mb-6 flex-shrink-0">
+            <h3 class="text-base font-semibold mb-3 text-brand-navy flex items-center gap-2">
+              Business Metrics
+            </h3>
+            
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Market Penetration Target (%)</label>
+              <input type="number" id="penetration" value="100" min="0.1" max="20" step="0.1" 
+                     class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all">
+              <p class="text-xs text-gray-500 mt-1">Percentage of target population you expect to reach</p>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Average Order Value ($)</label>
+              <input type="number" id="aov" value="45" min="1" step="1" 
+                     class="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all">
+              <p class="text-xs text-gray-500 mt-1">Expected revenue per customer</p>
+            </div>
+          </div>
+
+          <!-- Calculate Button -->
+          <button onclick="calculateMarketSize()" id="calculateBtn"
+                  class="w-full modern-button bg-gradient-to-r from-brand-green to-brand-blue text-white py-3 px-4 rounded-md font-semibold text-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02] mt-auto flex-shrink-0">
+           Calculate Market Size
+          </button>
+        </div>
+
+        <!-- Results Panel - Fixed Height to Match Input Panel -->
+        <div id="resultsPanel" class="elegant-card p-6 rounded-lg panel-container flex-panel">
+          <div id="emptyState" class="text-center py-8 flex-1 flex flex-col justify-center">
+            <h3 class="text-lg font-semibold text-brand-navy mb-2">Ready to Analyze Your Market?</h3>
+            <p class="text-sm text-gray-600 mb-4">Configure your target demographics and business metrics, then click "Calculate Market Size" to see your results.</p>
+            <div class="bg-gradient-to-r from-brand-green/10 to-brand-blue/10 p-3 rounded-md">
+              <p class="text-xs text-gray-700">
+                <strong>Pro Tip:</strong> Start with broader demographics to see the total market, then narrow down to find your core audience.
+              </p>
+            </div>
+          </div>
+
+          <div id="resultsContainer" class="hidden flex-1 flex flex-col overflow-hidden">
+            <!-- Header with Inline Metrics -->
+            <div class="mb-3 flex-shrink-0">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl font-bold text-brand-navy">Market Analysis Results</h2>
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-600">Population:</span>
+                    <span class="text-lg font-bold text-brand-green" id="totalPopulation">0</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-600">Sales:</span>
+                    <span class="text-lg font-bold text-brand-blue" id="totalSales">$0</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Target Profile Summary (Compact) -->
+              <div id="demographicsSummary" class="text-xs text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
+                <span class="font-medium text-gray-700">🎯 Target:</span> <span id="profileSummary"></span>
+              </div>
+            </div>
+
+            <!-- Slide Navigation -->
+            <div class="flex border-b border-gray-200 mb-3 flex-shrink-0">
+              <button id="heatmapTab" onclick="showSlide('heatmap')" 
+                      class="flex-1 py-2 px-4 text-sm font-medium text-brand-navy border-b-2 border-brand-green transition-colors">
+                📍 ZIP Code Map
+              </button>
+              <button id="tableTab" onclick="showSlide('table')" 
+                      class="flex-1 py-2 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-brand-navy transition-colors">
+                📊 Data Table
+              </button>
+              <button id="zipTab" onclick="showSlide('zip')" 
+                      class="flex-1 py-2 px-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-brand-navy transition-colors">
+                 Top ZIP Codes
+              </button>
+            </div>
+
+            <!-- Slide Content Container -->
+            <div class="flex-1 overflow-hidden min-h-0">
+              <!-- Heat Map Slide -->
+              <div id="heatmapSlide" class="h-full flex flex-col overflow-hidden">
+                <!-- Email Gate Notice -->
+                <div id="emailGateNotice" class="mb-2 p-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg flex-shrink-0">
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex-1">
+                      <h4 class="font-semibold text-brand-navy mb-1 flex items-center gap-2 text-xs">
+                        <span>🔓</span> Unlock Premium Market Insights
+                      </h4>
+                      <p class="text-xs text-gray-600">Get detailed ZIP code analysis, competitive insights, and strategic recommendations</p>
+                    </div>
+                    <div class="flex gap-2">
+                      <input type="email" id="unlockEmail" placeholder="Enter your business email" 
+                             class="px-2 py-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent min-w-[160px]">
+                      <button onclick="unlockTableData()" 
+                              class="bg-gradient-to-r from-brand-green to-brand-blue text-white px-3 py-1 rounded-md hover:from-brand-green/90 hover:to-brand-blue/90 transition-all duration-300 font-semibold text-xs whitespace-nowrap shadow-sm">
+                        Unlock Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ZIP Code Map Container -->
+                <div class="bg-white rounded-lg border border-gray-200 p-3 flex-1 flex flex-col overflow-hidden">
+                  <div class="mb-2 flex justify-between items-center flex-shrink-0">
+                    <h4 class="font-semibold text-gray-700 text-sm">US Market ZIP Code Map</h4>
+                    <div class="flex items-center gap-2 text-xs">
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-red-100 border border-red-300 rounded-sm"></div>
+                        <span>Low</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-yellow-200 border border-yellow-400 rounded-sm"></div>
+                        <span>Medium</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-green-400 border border-green-600 rounded-sm"></div>
+                        <span>High</span>
+                      </div>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-blue-500 border border-blue-700 rounded-sm"></div>
+                        <span>Very High</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Map Title -->
+                  <div class="mb-2 text-center flex-shrink-0">
+                    <h4 class="font-semibold text-gray-700 text-sm">Market Potential ZIP Code Map</h4>
+                    <p class="text-xs text-gray-500">Top 1000 ZIP codes shown as interactive pins</p>
+                  </div>
+                  
+                  <!-- Map Container -->
+                  <div id="mapContainer" class="flex-1 min-h-0 overflow-hidden">
+                    <div class="flex items-center justify-center h-full text-gray-500">
+                      <div class="text-center">
+                        <div class="text-3xl mb-2">️</div>
+                        <p class="text-sm">Interactive ZIP code map will appear here after calculation</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Map Legend -->
+                  <div id="mapLegend" class="mt-2 flex items-center justify-center space-x-4 text-xs flex-shrink-0 overflow-hidden">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-3 h-3 bg-blue-500 rounded"></div>
+                      <span class="text-gray-700">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table Slide -->
+              <div id="tableSlide" class="h-full flex flex-col overflow-hidden hidden">
+                <!-- Email Gate Notice -->
+                <div id="emailGateNoticeTable" class="mb-2 p-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg flex-shrink-0">
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex-1">
+                      <h4 class="font-semibold text-brand-navy mb-1 flex items-center gap-2 text-xs">
+                        <span>🔓</span> Unlock Premium Market Insights
+                      </h4>
+                      <p class="text-xs text-gray-600">Get detailed state-by-state analysis, competitive insights, and strategic recommendations</p>
+                    </div>
+                    <div class="flex gap-2">
+                      <input type="email" id="unlockEmailTable" placeholder="Enter your business email" 
+                             class="px-2 py-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent min-w-[160px]">
+                      <button onclick="unlockTableData()" 
+                              class="bg-gradient-to-r from-brand-green to-brand-blue text-white px-3 py-1 rounded-md hover:from-brand-green/90 hover:to-brand-blue/90 transition-all duration-300 font-semibold text-xs whitespace-nowrap shadow-sm">
+                        Unlock Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- State Rankings Table -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex-1 flex flex-col">
+                  <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+                    <h4 class="font-semibold text-gray-700">Top 10 States by Market Potential</h4>
+                    <button onclick="exportResults()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md transition-colors">
+                      📥 Export Data
+                    </button>
+                  </div>
+                  <div class="flex-1 overflow-auto min-h-0">
+                    <table class="w-full text-sm">
+                      <thead class="bg-gray-50 border-b border-gray-200 sticky top-0">
+                        <tr>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">Rank</th>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">State</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Target Population</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Market Potential</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Revenue Rank</th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody id="stateTableBody" class="divide-y divide-gray-200">
+                        <!-- State rows will be populated here -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ZIP Codes Slide -->
+              <div id="zipSlide" class="h-full flex flex-col overflow-hidden hidden">
+                <!-- Email Gate Notice -->
+                <div id="emailGateNoticeZip" class="mb-2 p-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg flex-shrink-0">
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex-1">
+                      <h4 class="font-semibold text-brand-navy mb-1 flex items-center gap-2 text-xs">
+                        <span>🔓</span> Unlock Premium Market Insights
+                      </h4>
+                      <p class="text-xs text-gray-600">Get detailed ZIP code analysis, competitive insights, and strategic recommendations</p>
+                    </div>
+                    <div class="flex gap-2">
+                      <input type="email" id="unlockEmailZip" placeholder="Enter your business email" 
+                             class="px-2 py-1 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-green focus:border-transparent min-w-[160px]">
+                      <button onclick="unlockTableData()" 
+                              class="bg-gradient-to-r from-brand-green to-brand-blue text-white px-3 py-1 rounded-md hover:from-brand-green/90 hover:to-brand-blue/90 transition-all duration-300 font-semibold text-xs whitespace-nowrap shadow-sm">
+                        Unlock Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- ZIP Codes Table -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex-1 flex flex-col">
+                  <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+                    <h4 class="font-semibold text-gray-700">Top 50 ZIP Codes by Target Audience Concentration</h4>
+                    <button onclick="exportZipResults()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md transition-colors">
+                      📥 Export ZIP Data
+                    </button>
+                  </div>
+                  <div class="flex-1 overflow-auto min-h-0">
+                    <table class="w-full text-sm">
+                      <thead class="bg-gray-50 border-b border-gray-200 sticky top-0">
+                        <tr>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">Rank</th>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">ZIP Code</th>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">City, State</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Target Population</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Total Population</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Concentration %</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Market Potential</th>
+                        </tr>
+                      </thead>
+                      <tbody id="zipTableBody" class="divide-y divide-gray-200">
+                        <!-- ZIP code rows will be populated here -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-brand-navy mb-4">Frequently Asked Questions</h2>
+        <p class="text-lg text-gray-600">Everything you need to know about our Sales Potential Calculator</p>
+      </div>
+
+      <div class="space-y-6">
+        <!-- How to Use -->
+        <div class="elegant-card p-6 rounded-lg">
+          <button class="faq-toggle w-full text-left flex items-center justify-between" onclick="toggleFAQ(this)">
+            <h3 class="text-lg font-semibold text-brand-navy">How do I use the Sales Potential Calculator?</h3>
+            <span class="text-brand-green text-xl font-bold">+</span>
+          </button>
+          <div class="faq-content hidden mt-4 text-gray-700">
+            <ol class="list-decimal list-inside space-y-2">
+              <li><strong>Define Your Target Demographics:</strong> Select gender, race/ethnicity, age range, and household income that best represent your ideal customers.</li>
+              <li><strong>Set Business Metrics:</strong> Enter your market penetration target (what % of the target population you expect to reach) and average order value.</li>
+              <li><strong>Calculate:</strong> Click "Calculate Market Size" to see your total addressable market and top opportunity ZIP codes.</li>
+              <li><strong>Analyze Results:</strong> Review the top 10 ZIP codes ranked by target population concentration to identify your best market opportunities.</li>
+              <li><strong>Unlock Premium Data:</strong> Enter your email to access competitive analysis, advertising costs, and ROI projections for strategic planning.</li>
+            </ol>
+            <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p class="text-sm"><strong>💡 Pro Tip:</strong> Start with broader demographics to understand the full market size, then narrow down to find your core audience segments.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why Important -->
+        <div class="elegant-card p-6 rounded-lg">
+          <button class="faq-toggle w-full text-left flex items-center justify-between" onclick="toggleFAQ(this)">
+            <h3 class="text-lg font-semibold text-brand-navy">Why is demographic-based market sizing important for my business?</h3>
+            <span class="text-brand-green text-xl font-bold">+</span>
+          </button>
+          <div class="faq-content hidden mt-4 text-gray-700">
+            <p class="mb-3">Demographic-based market sizing helps you make data-driven decisions by:</p>
+            <ul class="list-disc list-inside space-y-2">
+              <li><strong>Optimizing Marketing Spend:</strong> Focus your advertising budget on ZIP codes with the highest concentration of your target customers</li>
+              <li><strong>Strategic Planning:</strong> Understand your Total Addressable Market (TAM) to set realistic growth targets and secure funding</li>
+              <li><strong>Geographic Expansion:</strong> Identify which markets to enter next based on demographic fit rather than guesswork</li>
+              <li><strong>Product Development:</strong> Validate demand for new products by seeing the size of your target audience</li>
+              <li><strong>Competitive Advantage:</strong> Discover underserved markets where your competitors might not be focusing</li>
+              <li><strong>Sales Territory Planning:</strong> Allocate sales resources to areas with the highest potential return</li>
+            </ul>
+            <div class="mt-4 p-3 bg-green-50 rounded-lg">
+              <p class="text-sm"><strong>📊 Real Impact:</strong> Companies using demographic market sizing typically see 15-30% improvement in marketing ROI and faster expansion into profitable markets.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Sources -->
+        <div class="elegant-card p-6 rounded-lg">
+          <button class="faq-toggle w-full text-left flex items-center justify-between" onclick="toggleFAQ(this)">
+            <h3 class="text-lg font-semibold text-brand-navy">What data sources do you use and how accurate is the information?</h3>
+            <span class="text-brand-green text-xl font-bold">+</span>
+          </button>
+          <div class="faq-content hidden mt-4 text-gray-700">
+            <p class="mb-3">Our demographic data comes from the most authoritative and up-to-date sources:</p>
+            <div class="space-y-3">
+              <div class="border-l-4 border-brand-green pl-4">
+                <h4 class="font-semibold text-brand-navy">Primary Source: U.S. Census Bureau</h4>
+                <p class="text-sm">American Community Survey (ACS) 5-Year ZIP Code Tabulation Areas (ZCTA) - the most comprehensive and accurate demographic data available at the ZIP code level</p>
+              </div>
+              <div class="border-l-4 border-brand-blue pl-4">
+                <h4 class="font-semibold text-brand-navy">Data Coverage</h4>
+                <p class="text-sm">33,000+ ZIP codes across all 50 states, updated annually with the latest Census releases</p>
+              </div>
+              <div class="border-l-4 border-gray-300 pl-4">
+                <h4 class="font-semibold text-brand-navy">Quality Assurance</h4>
+                <p class="text-sm">Data is validated, cleaned, and cross-referenced to ensure accuracy and consistency across all demographic variables</p>
+              </div>
+            </div>
+            <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+              <p class="text-sm"><strong>⚠️ Note:</strong> While our demographic data is highly accurate, market penetration and business projections are estimates based on your inputs and should be validated with your specific market research.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculation Methodology -->
+        <div class="elegant-card p-6 rounded-lg">
+          <button class="faq-toggle w-full text-left flex items-center justify-between" onclick="toggleFAQ(this)">
+            <h3 class="text-lg font-semibold text-brand-navy">How do you calculate target population and sales projections?</h3>
+            <span class="text-brand-green text-xl font-bold">+</span>
+          </button>
+          <div class="faq-content hidden mt-4 text-gray-700">
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">1. Target Population Calculation</h4>
+                <div class="bg-gray-50 p-3 rounded-lg font-mono text-sm">
+                  Target Population = Base Population × Gender Filter × Ethnicity Filter × Age Filter × Income Filter
+                </div>
+                <p class="text-sm mt-2">We apply demographic filters sequentially to the base population in each ZIP code using Census ACS data tables.</p>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">2. Sales Projection Formula</h4>
+                <div class="bg-gray-50 p-3 rounded-lg font-mono text-sm">
+                  Potential Annual Sales = Target Population × (Penetration Rate ÷ 100) × Average Order Value
+                </div>
+                <p class="text-sm mt-2">This assumes each reached customer makes one purchase per year. Adjust penetration rate and AOV based on your business model.</p>
+              </div>
+
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">3. ZIP Code Ranking</h4>
+                <p class="text-sm">ZIP codes are ranked by target population size to identify areas with the highest concentration of your ideal customers.</p>
+              </div>
+
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">4. Premium Metrics (When Unlocked)</h4>
+                <ul class="text-sm list-disc list-inside space-y-1">
+                  <li><strong>Competitiveness Index:</strong> Estimated based on business density and market saturation factors</li>
+                  <li><strong>Estimated CPM:</strong> Projected cost per thousand impressions for digital advertising in that area</li>
+                  <li><strong>Potential ROI:</strong> Expected return on investment based on market conditions and competition levels</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="elegant-card p-6 rounded-lg">
+          <button class="faq-toggle w-full text-left flex items-center justify-between" onclick="toggleFAQ(this)">
+            <h3 class="text-lg font-semibold text-brand-navy">What are common use cases for this tool?</h3>
+            <span class="text-brand-green text-xl font-bold">+</span>
+          </button>
+          <div class="faq-content hidden mt-4 text-gray-700">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">🛍️ E-commerce & Retail</h4>
+                <ul class="text-sm list-disc list-inside space-y-1">
+                  <li>Targeting ads for fashion brands</li>
+                  <li>Planning store locations</li>
+                  <li>Local delivery optimization</li>
+                  <li>Demographic-specific product launches</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">🏥 Healthcare & Services</h4>
+                <ul class="text-sm list-disc list-inside space-y-1">
+                  <li>Medical practice expansion</li>
+                  <li>Health insurance marketing</li>
+                  <li>Wellness program targeting</li>
+                  <li>Telemedicine market sizing</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">🏠 Real Estate & Finance</h4>
+                <ul class="text-sm list-disc list-inside space-y-1">
+                  <li>Mortgage lending targets</li>
+                  <li>Real estate investment analysis</li>
+                  <li>Insurance product marketing</li>
+                  <li>Financial advisor prospecting</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold text-brand-navy mb-2">🎓 Education & Tech</h4>
+                <ul class="text-sm list-disc list-inside space-y-1">
+                  <li>Online course marketing</li>
+                  <li>Software product validation</li>
+                  <li>App user acquisition</li>
+                  <li>Educational service expansion</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limitations -->
+        <div class="elegant-card p-6 rounded-lg">
+          <button class="faq-toggle w-full text-left flex items-center justify-between" onclick="toggleFAQ(this)">
+            <h3 class="text-lg font-semibold text-brand-navy">What are the limitations of this analysis?</h3>
+            <span class="text-brand-green text-xl font-bold">+</span>
+          </button>
+          <div class="faq-content hidden mt-4 text-gray-700">
+            <div class="space-y-3">
+              <div class="border-l-4 border-yellow-400 pl-4">
+                <h4 class="font-semibold text-yellow-700">Market Penetration Assumptions</h4>
+                <p class="text-sm">Penetration rates are estimates and actual results depend on your marketing effectiveness, competition, and product-market fit.</p>
+              </div>
+              <div class="border-l-4 border-blue-400 pl-4">
+                <h4 class="font-semibold text-blue-700">Demographic Overlap</h4>
+                <p class="text-sm">Census data provides population counts but doesn't capture behavioral preferences, purchasing intent, or brand affinity.</p>
+              </div>
+              <div class="border-l-4 border-purple-400 pl-4">
+                <h4 class="font-semibold text-purple-700">Geographic Boundaries</h4>
+                <p class="text-sm">ZIP codes don't always align with natural market boundaries. Customers may shop across ZIP code lines.</p>
+              </div>
+              <div class="border-l-4 border-red-400 pl-4">
+                <h4 class="font-semibold text-red-700">Time Sensitivity</h4>
+                <p class="text-sm">Demographics change over time. This analysis provides a snapshot and should be updated regularly for long-term planning.</p>
+              </div>
+            </div>
+            <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p class="text-sm"><strong>📈 Best Practice:</strong> Use this analysis as a starting point, then validate findings with A/B testing, surveys, and real customer data.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-12 bg-gradient-to-r from-brand-green to-brand-blue text-white">
+    <div class="max-w-4xl mx-auto text-center px-4">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">Ready to Turn Insights Into Action?</h2>
+      <p class="text-base mb-6 opacity-90">
+        This market analysis is just the beginning. See how Realyn helps you execute on these insights with real-time campaign optimization.
+      </p>
+      <div class="flex justify-center gap-3 flex-wrap">
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek?month=2025-06" target="_blank" 
+           class="modern-button bg-white text-brand-navy px-6 py-3 rounded-lg font-semibold text-sm hover:bg-yellow-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Book Your Demo
+        </a>
+        <a href="index.html" 
+           class="modern-button border-2 border-white text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-white hover:text-brand-navy transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Configuration - UPDATE THIS WITH YOUR ACTUAL RENDER URL
+    const API_BASE_URL = 'https://realyn-api.onrender.com'; // Replace with your actual deployed URL
+    
+    let currentResults = null;
+    let isDataUnlocked = false; // Track if user has already unlocked data
+    let stateData = null; // Store aggregated state-level data
+
+    // US State mappings for data aggregation
+    const stateNameMapping = {
+      'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California',
+      'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia',
+      'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa',
+      'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+      'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri',
+      'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey',
+      'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio',
+      'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+      'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont',
+      'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming',
+      'DC': 'District of Columbia'
+    };
+
+    // Check API status on page load
+    async function checkApiStatus() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        const data = await response.json();
+        
+        if (data.status === 'healthy') {
+          document.getElementById('zipCount').textContent = data.zip_count.toLocaleString();
+          showApiStatus('success', `✅ Connected to live data (${data.zip_count.toLocaleString()} ZIP codes)`);
+        } else {
+          showApiStatus('error', '❌ API connection issue');
+        }
+      } catch (error) {
+        showApiStatus('error', '⚠️ Using demo mode - full dataset not available');
+        document.getElementById('zipCount').textContent = '33,000+';
+        console.error('API connection failed:', error);
+      }
+    }
+
+    function showApiStatus(type, message) {
+      const statusEl = document.getElementById('apiStatus');
+      statusEl.className = `px-4 py-3 rounded-lg text-sm ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`;
+      statusEl.textContent = message;
+      statusEl.classList.remove('hidden');
+      
+      // Hide after 5 seconds
+      setTimeout(() => {
+        statusEl.classList.add('hidden');
+      }, 5000);
+    }
+
+    async function calculateMarketSize() {
+      const button = document.getElementById('calculateBtn');
+      const originalText = button.innerHTML;
+      
+      // Show loading state
+      button.innerHTML = '<div class="loading-spinner mx-auto"></div> Calculating...';
+      button.disabled = true;
+
+      try {
+        const requestData = {
+          gender: document.getElementById('gender').value,
+          ethnicity: document.getElementById('ethnicity').value,
+          age_range: document.getElementById('ageRange').value,
+          income: document.getElementById('income').value,
+          penetration: parseFloat(document.getElementById('penetration').value),
+          aov: parseFloat(document.getElementById('aov').value)
+        };
+
+        const response = await fetch(`${API_BASE_URL}/analyze-market`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData)
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const results = await response.json();
+        currentResults = results;
+        
+        displayResults(results);
+
+        // Track calculation
+        trackEvent('market_size_calculated', {
+          ...requestData,
+          total_population: results.total_population,
+          total_sales: results.total_sales
+        });
+
+      } catch (error) {
+        console.error('Error calculating market size:', error);
+        console.error('Full error details:', error.message, error.stack);
+        
+        // More detailed error message
+        let errorMsg = 'Unable to calculate market size. ';
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          errorMsg += 'API connection failed. Please check if the API is running.';
+        } else if (error.message.includes('API error:')) {
+          errorMsg += `Server error: ${error.message}`;
+        } else {
+          errorMsg += 'Please try again or contact support if the issue persists.';
+        }
+        
+        showErrorMessage(errorMsg);
+      } finally {
+        // Restore button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+      }
+    }
+
+    function aggregateToStateLevel(zipResults) {
+      const stateAggregation = {};
+      const currentPenetration = parseFloat(document.getElementById('penetration').value);
+      const currentAOV = parseFloat(document.getElementById('aov').value);
+
+      // Aggregate ZIP code data to state level
+      zipResults.top_zip_codes.forEach(zip => {
+        const state = zip.state || 'Unknown';
+        if (!stateAggregation[state]) {
+          stateAggregation[state] = {
+            state: state,
+            state_name: stateNameMapping[state] || state,
+            total_population: 0,
+            target_population: 0,
+            market_potential: 0,
+            zip_count: 0
+          };
+        }
+
+        stateAggregation[state].total_population += zip.total_population || 0;
+        stateAggregation[state].target_population += zip.target_population || 0;
+        // target_population already reflects penetration ⇒ multiply by AOV only
+        stateAggregation[state].market_potential += Math.floor(zip.target_population * currentAOV);
+        stateAggregation[state].zip_count += 1;
+        
+
+      });
+
+      
+
+        // Sort by market potential
+        return Object.values(stateAggregation)
+          .sort((a, b) => b.market_potential - a.market_potential)
+          .slice(0, 10);
+    }
+
+    function createZIPCodeMap(zipResults) {
+      // NEW IMPLEMENTATION: Create a map with ZIP code pins instead of state heat map
+      const mapContainer = document.getElementById('mapContainer');
+      mapContainer.innerHTML = '';
+
+      const width = mapContainer.offsetWidth || 960;
+      const height = Math.max(mapContainer.offsetHeight || 400, 300);
+
+      // Create responsive SVG
+      const svg = d3.select(mapContainer)
+        .append('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .attr('width', '100%')
+        .attr('height', '100%');
+
+      // Albers USA projection for accurate US map
+      const projection = d3.geoAlbersUsa()
+        .translate([width / 2, height / 2])
+        .scale(width);
+
+      const geoPath = d3.geoPath().projection(projection);
+
+      // Load US states for background
+      d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(usData => {
+        const states = topojson.feature(usData, usData.objects.states).features;
+        
+        // Draw state boundaries as background
+        svg.selectAll('path.state-bg')
+          .data(states)
+          .enter()
+          .append('path')
+          .attr('class', 'state-bg')
+          .attr('d', geoPath)
+          .attr('fill', '#f8fafc')
+          .attr('stroke', '#e2e8f0')
+          .attr('stroke-width', 0.5);
+
+        // Create ZIP code pins
+        createZIPPins(svg, zipResults, projection);
+      });
+    }
+
+    function createZIPPins(svg, zipResults, projection) {
+      // Filter out ZIP codes without coordinates
+      const zipsWithCoords = zipResults.filter(zip => 
+        zip.latitude !== null && zip.longitude !== null && 
+        !isNaN(zip.latitude) && !isNaN(zip.longitude)
+      );
+
+      if (zipsWithCoords.length === 0) {
+        // If no coordinates, show message and fallback to state heat map
+        svg.append('text')
+          .attr('x', '50%')
+          .attr('y', '50%')
+          .attr('text-anchor', 'middle')
+          .attr('class', 'text-lg text-gray-500')
+          .text('ZIP code coordinates not available');
+        
+        // Fallback to state heat map
+        if (stateData) {
+          createUSHeatMap(stateData);
+        }
+        return;
+      }
+
+      // Calculate market potential range for color scaling
+      const marketPotentials = zipsWithCoords.map(zip => zip.expected_sales);
+      const minPotential = Math.min(...marketPotentials);
+      const maxPotential = Math.max(...marketPotentials);
+      const range = maxPotential - minPotential;
+
+      // Color scale for pins
+      const colorScale = d3.scaleSequential()
+        .domain([minPotential, maxPotential])
+        .interpolator(d3.interpolateBlues);
+
+      // Create ZIP code pins
+      const pins = svg.selectAll('circle.zip-pin')
+        .data(zipsWithCoords)
+        .enter()
+        .append('circle')
+        .attr('class', 'zip-pin')
+        .attr('cx', d => projection([d.longitude, d.latitude])[0])
+        .attr('cy', d => projection([d.longitude, d.latitude])[1])
+        .attr('r', 3)
+        .attr('fill', d => colorScale(d.expected_sales))
+        .attr('stroke', '#ffffff')
+        .attr('stroke-width', 1)
+        .attr('opacity', 0.8)
+        .style('cursor', 'pointer');
+
+      // Add hover effects
+      pins.on('mouseenter', function(event, d) {
+        d3.select(this)
+          .attr('r', 6)
+          .attr('opacity', 1)
+          .attr('stroke-width', 2);
+
+        // Show tooltip
+        showZIPTooltip(event, d);
+      })
+      .on('mouseleave', function(event, d) {
+        d3.select(this)
+          .attr('r', 3)
+          .attr('opacity', 0.8)
+          .attr('stroke-width', 1);
+
+        // Hide tooltip
+        hideZIPTooltip();
+      });
+
+      // Update legend
+      updateZIPMapLegend(minPotential, maxPotential);
+    }
+
+    function showZIPTooltip(event, zipData) {
+      let tooltip = d3.select('#zipMapTooltip');
+      if (tooltip.empty()) {
+        tooltip = d3.select('body')
+          .append('div')
+          .attr('id', 'zipMapTooltip')
+          .attr('class', 'absolute bg-gray-800 text-white px-3 py-2 rounded text-sm pointer-events-none z-50 shadow-lg')
+          .style('opacity', 0)
+          .style('position', 'absolute')
+          .style('z-index', '9999');
+      }
+
+      const tooltipText = `
+        <strong>ZIP: ${zipData.zip_code}</strong><br/>
+        ${zipData.city ? zipData.city + ', ' : ''}${zipData.state}<br/>
+        Target Population: ${zipData.target_population.toLocaleString()}<br/>
+        Market Potential: $${zipData.expected_sales.toLocaleString()}
+      `;
+
+      tooltip.html(tooltipText)
+             .style('left', (event.pageX + 15) + 'px')
+             .style('top', (event.pageY - 15) + 'px')
+             .style('opacity', 1);
+    }
+
+    function hideZIPTooltip() {
+      const tooltip = d3.select('#zipMapTooltip');
+      if (!tooltip.empty()) {
+        tooltip.style('opacity', 0);
+      }
+    }
+
+    function updateZIPMapLegend(minPotential, maxPotential) {
+      const legendContainer = document.querySelector('#mapLegend');
+      if (legendContainer) {
+        legendContainer.innerHTML = `
+          <div class="mt-4 flex items-center justify-center space-x-6 text-sm">
+            <div class="flex items-center space-x-2">
+              <div class="w-4 h-4 bg-blue-800 rounded"></div>
+              <span class="text-gray-700">High: $${Math.round(maxPotential).toLocaleString()}+</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-4 h-4 bg-blue-500 rounded"></div>
+              <span class="text-gray-700">Medium: $${Math.round((minPotential + maxPotential) / 2).toLocaleString()}+</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-4 h-4 bg-blue-200 rounded"></div>
+              <span class="text-gray-700">Low: Under $${Math.round(minPotential).toLocaleString()}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-16 h-4 bg-gradient-to-r from-blue-200 to-blue-800 rounded"></div>
+              <span class="text-gray-700">Market Potential Scale</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function displayResults(results) {
+      // Get current input values directly from DOM to ensure accuracy
+      const currentPenetration = parseFloat(document.getElementById('penetration').value);
+      const currentAOV = parseFloat(document.getElementById('aov').value);
+      
+      // Penetration has already been applied server-side, so use the totals directly
+      const reachedPopulation = results.total_population;
+      const calculatedTotalSales = Math.floor(results.total_sales);
+      
+      // Update summary metrics
+      document.getElementById('totalPopulation').textContent = reachedPopulation.toLocaleString();
+      document.getElementById('totalSales').textContent = '$' + calculatedTotalSales.toLocaleString();
+      
+      const currentGender = document.getElementById('gender').value;
+      const currentEthnicity = document.getElementById('ethnicity').value;
+      const currentAgeRange = document.getElementById('ageRange').value;
+      const currentIncome = document.getElementById('income').value;
+
+      // Update demographics summary
+      const profileText = `${currentGender === 'all' ? 'All genders' : currentGender}, ${currentEthnicity === 'all' ? 'all ethnicities' : currentEthnicity}, ${currentAgeRange === 'all' ? 'all ages' : currentAgeRange + ' years'}, ${currentIncome === 'all' ? 'all income levels' : currentIncome.replace('_', ' ')} • ${currentPenetration}% penetration • $${currentAOV} AOV`;
+      document.getElementById('profileSummary').textContent = profileText;
+
+      // Display ZIP codes data if available
+      if (results.top_zip_codes && Array.isArray(results.top_zip_codes)) {
+        displayZipCodes(results.top_zip_codes, currentAOV);
+        
+        // Create ZIP code map instead of state heat map
+        createZIPCodeMap(results.top_zip_codes);
+      }
+
+      // Use server-provided state_results when available to show the full picture
+      if (results.state_results && Array.isArray(results.state_results) && results.state_results.length > 0) {
+        // Convert and enrich the raw state data coming from the API
+        stateData = results.state_results.map(sr => ({
+          state: sr.state,
+          state_name: sr.state_name,
+          total_population: sr.total_population,
+          target_population: sr.target_population,
+          market_potential: Math.floor(sr.market_potential),
+
+        }));
+
+
+
+        // Sort by market potential for table display
+        stateData.sort((a, b) => b.market_potential - a.market_potential);
+        
+        // Keep full state data for heat map, but create separate data for table
+        const fullStateData = [...stateData]; // Copy for heat map
+        const tableStateData = stateData.slice(0, 10); // Top 10 for table
+        
+        // Create heat map with ALL states
+        createUSHeatMap(fullStateData);
+        
+        // Use table data for the rest of the processing
+        stateData = tableStateData;
+      } else {
+        // Fallback to client-side aggregation (legacy path)
+        stateData = aggregateToStateLevel(results);
+        
+        // Create heat map with all states
+        createUSHeatMap(stateData);
+      }
+
+      // Check if data should be unlocked
+      const shouldShowUnlockedData = isDataUnlocked || localStorage.getItem('realyn_data_unlocked') === 'true';
+
+      // Display state table
+      const stateTableHtml = stateData.map((state, index) => {
+        if (shouldShowUnlockedData) {
+          return `
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3">
+                <div class="w-6 h-6 bg-gradient-to-r from-brand-green to-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  ${index + 1}
+                </div>
+              </td>
+              <td class="px-4 py-3 font-semibold text-brand-navy">${state.state_name}</td>
+              <td class="px-4 py-3 text-right text-gray-700">${state.target_population.toLocaleString()}</td>
+              <td class="px-4 py-3 text-right font-semibold text-brand-green">$${state.market_potential.toLocaleString()}</td>
+              <td class="px-4 py-3 text-right">
+                <span class="px-2 py-1 rounded-full text-xs font-semibold ${
+                  index === 0 ? 'bg-blue-100 text-blue-800' :
+                  index === 1 ? 'bg-green-100 text-green-800' :
+                  index === 2 ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-gray-100 text-gray-800'
+                }">#${index + 1}</span>
+              </td>
+            </tr>
+          `;
+        } else {
+          return `
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3">
+                <div class="w-6 h-6 bg-gradient-to-r from-brand-green to-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  ${index + 1}
+                </div>
+              </td>
+              <td class="px-4 py-3 font-semibold text-brand-navy">${state.state_name}</td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">${state.target_population.toLocaleString()}</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">$${state.market_potential.toLocaleString()}</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">#${index + 1}</span>
+              </td>
+            </tr>
+          `;
+        }
+      }).join('');
+
+      document.getElementById('stateTableBody').innerHTML = stateTableHtml;
+
+
+
+      // Show/hide email gate notices based on unlock status
+      if (shouldShowUnlockedData) {
+        document.getElementById('emailGateNotice').classList.add('hidden');
+        document.getElementById('emailGateNoticeTable').classList.add('hidden');
+        document.getElementById('emailGateNoticeZip').classList.add('hidden');
+        isDataUnlocked = true;
+      } else {
+        document.getElementById('emailGateNotice').classList.remove('hidden');
+        document.getElementById('emailGateNoticeTable').classList.remove('hidden');
+        document.getElementById('emailGateNoticeZip').classList.remove('hidden');
+      }
+
+      // Show results and hide empty state
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('resultsContainer').classList.remove('hidden');
+      
+      // Show heat map slide by default
+      showSlide('heatmap');
+    }
+
+    function showErrorMessage(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.textContent = message;
+      
+      const resultsPanel = document.getElementById('resultsPanel');
+      resultsPanel.insertBefore(errorDiv, resultsPanel.firstChild);
+      
+      // Remove after 10 seconds
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 10000);
+    }
+
+    function showSuccessMessage(message) {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'success-message';
+      successDiv.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span>✅</span>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      const resultsPanel = document.getElementById('resultsPanel');
+      resultsPanel.insertBefore(successDiv, resultsPanel.firstChild);
+      
+      // Remove after 8 seconds
+      setTimeout(() => {
+        successDiv.remove();
+      }, 8000);
+    }
+
+    function displayZipCodes(zipCodes, aov) {
+      // Sort ZIP codes by target population (highest concentration first)
+      const sortedZipCodes = zipCodes
+        .sort((a, b) => b.target_population - a.target_population)
+        .slice(0, 50); // Top 50
+
+      const zipTableHtml = sortedZipCodes.map((zip, index) => {
+        const concentration = zip.total_population > 0 ? 
+          ((zip.target_population / zip.total_population) * 100).toFixed(1) : 0;
+        const marketPotential = Math.floor(zip.target_population * aov);
+        
+        // Check if data should be unlocked
+        const shouldShowUnlockedData = isDataUnlocked || localStorage.getItem('realyn_data_unlocked') === 'true';
+        
+        if (shouldShowUnlockedData) {
+          return `
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3">
+                <div class="w-6 h-6 bg-gradient-to-r from-brand-green to-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  ${index + 1}
+                </div>
+              </td>
+              <td class="px-4 py-3 font-semibold text-brand-navy">${zip.zip_code}</td>
+              <td class="px-4 py-3 text-gray-700">${zip.city || 'N/A'}, ${zip.state || 'N/A'}</td>
+              <td class="px-4 py-3 text-right text-gray-700">${zip.target_population.toLocaleString()}</td>
+              <td class="px-4 py-3 text-right text-gray-600">${zip.total_population.toLocaleString()}</td>
+              <td class="px-4 py-3 text-right font-semibold text-brand-green">${concentration}%</td>
+              <td class="px-4 py-3 text-right font-semibold text-brand-blue">$${marketPotential.toLocaleString()}</td>
+            </tr>
+          `;
+        } else {
+          return `
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3">
+                <div class="w-6 h-6 bg-gradient-to-r from-brand-green to-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  ${index + 1}
+                </div>
+              </td>
+              <td class="px-4 py-3 font-semibold text-brand-navy">${zip.zip_code}</td>
+              <td class="px-4 py-3 text-gray-700">${zip.city || 'N/A'}, ${zip.state || 'N/A'}</td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">${zip.target_population.toLocaleString()}</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">${zip.total_population.toLocaleString()}</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">${concentration}%</span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <span class="blur-sm select-none text-gray-400">$${marketPotential.toLocaleString()}</span>
+              </td>
+            </tr>
+          `;
+        }
+      }).join('');
+
+      document.getElementById('zipTableBody').innerHTML = zipTableHtml;
+    }
+
+    function exportResults() {
+      if (!stateData) {
+        alert('No results to export. Please run an analysis first.');
+        return;
+      }
+      
+      // Check if data is unlocked using the persistent unlock status
+      const dataUnlocked = isDataUnlocked || localStorage.getItem('realyn_data_unlocked') === 'true';
+      
+      // Create CSV content based on unlocked data
+      let headers = ['Rank', 'State', 'State_Code'];
+      
+      if (dataUnlocked) {
+        headers.push('Target_Population', 'Market_Potential');
+      }
+      
+      const csvRows = [headers.join(',')];
+      
+      stateData.forEach((state, index) => {
+        let row = [
+          index + 1,
+          state.state_name,
+          state.state
+        ];
+        
+        if (dataUnlocked) {
+          row.push(
+            state.target_population,
+            state.market_potential
+          );
+        }
+          
+        csvRows.push(row.join(','));
+      });
+
+      // Download CSV
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'state-market-analysis.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      trackEvent('results_exported', {
+        format: 'csv',
+        state_count: stateData.length,
+        data_unlocked: dataUnlocked
+      });
+    }
+
+    function exportZipResults() {
+      if (!currentResults || !currentResults.top_zip_codes) {
+        alert('No ZIP code results to export. Please run an analysis first.');
+        return;
+      }
+      
+      // Check if data is unlocked using the persistent unlock status
+      const dataUnlocked = isDataUnlocked || localStorage.getItem('realyn_data_unlocked') === 'true';
+      
+      // Create CSV content based on unlocked data
+      let headers = ['Rank', 'ZIP_Code', 'City', 'State', 'Target_Population', 'Total_Population', 'Concentration_Percentage'];
+      
+      if (dataUnlocked) {
+        headers.push('Market_Potential');
+      }
+      
+      const csvRows = [headers.join(',')];
+      
+      const currentAOV = parseFloat(document.getElementById('aov').value);
+      const sortedZipCodes = currentResults.top_zip_codes
+        .sort((a, b) => b.target_population - a.target_population)
+        .slice(0, 50);
+      
+      sortedZipCodes.forEach((zip, index) => {
+        const concentration = zip.total_population > 0 ? 
+          ((zip.target_population / zip.total_population) * 100).toFixed(1) : 0;
+        const marketPotential = Math.floor(zip.target_population * currentAOV);
+        
+        let row = [
+          index + 1,
+          zip.zip_code,
+          zip.city || 'N/A',
+          zip.state || 'N/A',
+          zip.target_population,
+          zip.total_population,
+          concentration
+        ];
+        
+        if (dataUnlocked) {
+          row.push(marketPotential);
+        }
+          
+        csvRows.push(row.join(','));
+      });
+
+      // Download CSV
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'top-50-zip-codes-analysis.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      trackEvent('zip_results_exported', {
+        format: 'csv',
+        zip_count: sortedZipCodes.length,
+        data_unlocked: dataUnlocked
+      });
+    }
+
+    function unlockTableData() {
+      // Get email from any of the three email inputs
+      let email = document.getElementById('unlockEmail').value;
+      if (!email || !email.includes('@')) {
+        email = document.getElementById('unlockEmailTable').value;
+      }
+      if (!email || !email.includes('@')) {
+        email = document.getElementById('unlockEmailZip').value;
+      }
+      
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address');
+        return;
+      }
+
+      if (!currentResults || !stateData) {
+        alert('No results to unlock. Please run an analysis first.');
+        return;
+      }
+
+      // Set unlock status
+      isDataUnlocked = true;
+      localStorage.setItem('realyn_data_unlocked', 'true');
+      localStorage.setItem('realyn_user_email', email);
+
+      // Re-render the results with unlocked data
+      displayResults(currentResults);
+      
+      // Also refresh ZIP codes display if available
+      if (currentResults.top_zip_codes && Array.isArray(currentResults.top_zip_codes)) {
+        const currentAOV = parseFloat(document.getElementById('aov').value);
+        displayZipCodes(currentResults.top_zip_codes, currentAOV);
+      }
+
+      // Send confirmation email to user
+      emailjs.send('default_service', 'premium_unlock_template', {
+        to_email: email,
+        user_email: email,
+        from_name: 'Realyn.ai Team'
+      })
+      .then(function(response) {
+        console.log('Confirmation email sent to user');
+      })
+      .catch(function(error) {
+        console.error('User confirmation email error:', error);
+      });
+
+      // Forward lead email to vivek@realyn.ai
+      emailjs.send('default_service', 'lead_forward_template', {
+        to_email: FORWARD_EMAIL,
+        user_email: email,
+        from_name: 'Realyn.ai Lead Capture',
+        subject: 'New Lead from ZipInsights Tool',
+        message: `New lead captured from ZipInsights tool:\n\nEmail: ${email}\nTimestamp: ${new Date().toLocaleString()}\nPage: ZipInsights Market Analysis\n\nThis user has unlocked premium market data and should be followed up with.`
+      })
+      .then(function(response) {
+        console.log('Lead email forwarded to vivek@realyn.ai');
+      })
+      .catch(function(error) {
+        console.error('Lead forwarding email error:', error);
+      });
+
+      // Show success message
+      showSuccessMessage('Data unlocked! Check your email for additional insights.');
+
+      trackEvent('state_data_unlocked', { email: email });
+    }
+
+    // FAQ Toggle Functionality
+    function toggleFAQ(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('span');
+      
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.textContent = '−';
+        icon.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        icon.textContent = '+';
+        icon.classList.remove('rotate-180');
+      }
+    }
+
+    // Slide functionality
+    function showSlide(slideId) {
+      // Reset all tab styles
+      document.getElementById('heatmapTab').classList.remove('border-b-2', 'border-brand-green', 'text-brand-navy');
+      document.getElementById('heatmapTab').classList.add('text-gray-500', 'border-transparent');
+      document.getElementById('tableTab').classList.remove('border-b-2', 'border-brand-green', 'text-brand-navy');
+      document.getElementById('tableTab').classList.add('text-gray-500', 'border-transparent');
+      document.getElementById('zipTab').classList.remove('border-b-2', 'border-brand-green', 'text-brand-navy');
+      document.getElementById('zipTab').classList.add('text-gray-500', 'border-transparent');
+      
+      // Hide all slide content
+      document.getElementById('heatmapSlide').classList.add('hidden');
+      document.getElementById('tableSlide').classList.add('hidden');
+      document.getElementById('zipSlide').classList.add('hidden');
+
+      // Show selected slide and style its tab
+      if (slideId === 'heatmap') {
+        document.getElementById('heatmapTab').classList.remove('text-gray-500', 'border-transparent');
+        document.getElementById('heatmapTab').classList.add('border-b-2', 'border-brand-green', 'text-brand-navy');
+        document.getElementById('heatmapSlide').classList.remove('hidden');
+      } else if (slideId === 'table') {
+        document.getElementById('tableTab').classList.remove('text-gray-500', 'border-transparent');
+        document.getElementById('tableTab').classList.add('border-b-2', 'border-brand-green', 'text-brand-navy');
+        document.getElementById('tableSlide').classList.remove('hidden');
+      } else if (slideId === 'zip') {
+        document.getElementById('zipTab').classList.remove('text-gray-500', 'border-transparent');
+        document.getElementById('zipTab').classList.add('border-b-2', 'border-brand-green', 'text-brand-navy');
+        document.getElementById('zipSlide').classList.remove('hidden');
+      }
+    }
+
+    // Sync email inputs across all slides
+    function syncEmailInputs() {
+      const emailInputs = [
+        document.getElementById('unlockEmail'),
+        document.getElementById('unlockEmailTable'),
+        document.getElementById('unlockEmailZip')
+      ];
+      
+      emailInputs.forEach(input => {
+        if (input) {
+          input.addEventListener('input', function() {
+            const value = this.value;
+            emailInputs.forEach(otherInput => {
+              if (otherInput && otherInput !== this) {
+                otherInput.value = value;
+              }
+            });
+          });
+        }
+      });
+    }
+
+    // Pre-fill email inputs with stored email
+    function prefillEmailInputs() {
+      const storedEmail = localStorage.getItem('realyn_user_email');
+      if (storedEmail) {
+        const emailInputs = [
+          document.getElementById('unlockEmail'),
+          document.getElementById('unlockEmailTable'),
+          document.getElementById('unlockEmailZip')
+        ];
+        
+        emailInputs.forEach(input => {
+          if (input) {
+            input.value = storedEmail;
+          }
+        });
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      checkApiStatus();
+      
+      // Check if user has previously unlocked data
+      if (localStorage.getItem('realyn_data_unlocked') === 'true') {
+        isDataUnlocked = true;
+      }
+
+      // Sync email inputs across slides
+      syncEmailInputs();
+
+      // Pre-fill email inputs if available
+      prefillEmailInputs();
+
+      // Show default slide (Heat Map)
+      showSlide('heatmap');
+    });
+  </script>
+
+</body>
+</html>
