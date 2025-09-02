@@ -655,6 +655,8 @@ def get_zip_codes_for_map():
         data = request.get_json()
         filters = data.get('filters', {})
         
+        print(f"Received filters: {filters}")
+        
         # Start with all data
         all_zip_codes = demographic_df.copy()
         
@@ -747,6 +749,20 @@ def get_zip_codes_for_map():
             
             zip_codes_with_target_pop['target_population'] *= income_multiplier
         
+        # Apply gender filter multiplier
+        if 'gender' in filters and filters['gender'] and filters['gender'] != 'both':
+            print(f"Applying gender filter: {filters['gender']}")
+            gender_multiplier = 0
+            if filters['gender'] == 'male' and 'male' in zip_codes_with_target_pop.columns:
+                gender_multiplier = zip_codes_with_target_pop['male'] / 100
+                print(f"Male multiplier applied, range: {gender_multiplier.min():.3f} to {gender_multiplier.max():.3f}")
+            elif filters['gender'] == 'female' and 'female' in zip_codes_with_target_pop.columns:
+                gender_multiplier = zip_codes_with_target_pop['female'] / 100
+                print(f"Female multiplier applied, range: {gender_multiplier.min():.3f} to {gender_multiplier.max():.3f}")
+            
+            zip_codes_with_target_pop['target_population'] *= gender_multiplier
+            print(f"Target population after gender filter: {zip_codes_with_target_pop['target_population'].sum():,.0f}")
+        
         # CRITICAL FIX: Filter out zip codes with zero or near-zero target population
         zip_codes_with_target_pop = zip_codes_with_target_pop[zip_codes_with_target_pop['target_population'] > 0]
         
@@ -820,6 +836,181 @@ def get_zip_codes_for_map():
         import traceback
         traceback.print_exc()
         return jsonify({"error": f"Failed to get zip codes: {str(e)}"}), 500
+
+@app.route('/api/zip-codes-table', methods=['POST'])
+def get_zip_codes_table():
+    """
+    Get zip codes data for the table view with all required columns:
+    ZIP Code, City, State, Total population, Target Audience, % of Total population, Market Potential
+    """
+    global demographic_df
+    
+    try:
+        # Load data if not already loaded
+        if demographic_df is None:
+            demographic_df = load_demographic_data()
+        
+        if demographic_df is None:
+            return jsonify({"error": "Demographic data not available"}), 500
+        
+        data = request.get_json()
+        filters = data.get('filters', {})
+        yearly_consumption = data.get('yearly_consumption', 100)  # Default to $100 per capita
+        
+        print(f"Received filters for table: {filters}")
+        print(f"Yearly consumption: ${yearly_consumption}")
+        
+        # Start with all data
+        all_zip_codes = demographic_df.copy()
+        
+        # Calculate target population for each zip code based on demographic criteria
+        zip_codes_with_target_pop = all_zip_codes.copy()
+        zip_codes_with_target_pop['target_population'] = zip_codes_with_target_pop['population']
+        
+        # Apply age filter multiplier
+        if 'age' in filters and filters['age'] and filters['age'] != 'all':
+            age_multiplier = 0
+            if filters['age'] == 'under20':
+                if 'age_under_10' in zip_codes_with_target_pop.columns and 'age_10_to_19' in zip_codes_with_target_pop.columns:
+                    age_multiplier = (zip_codes_with_target_pop['age_under_10'] + zip_codes_with_target_pop['age_10_to_19']) / 100
+            elif filters['age'] == '20-29':
+                if 'age_20s' in zip_codes_with_target_pop.columns:
+                    age_multiplier = zip_codes_with_target_pop['age_20s'] / 100
+            elif filters['age'] == '30-39':
+                if 'age_30s' in zip_codes_with_target_pop.columns:
+                    age_multiplier = zip_codes_with_target_pop['age_30s'] / 100
+            elif filters['age'] == '40-49':
+                if 'age_40s' in zip_codes_with_target_pop.columns:
+                    age_multiplier = zip_codes_with_target_pop['age_40s'] / 100
+            elif filters['age'] == '50-59':
+                if 'age_50s' in zip_codes_with_target_pop.columns:
+                    age_multiplier = zip_codes_with_target_pop['age_50s'] / 100
+            elif filters['age'] == '60plus':
+                age_multiplier = 0
+                if 'age_60s' in zip_codes_with_target_pop.columns:
+                    age_multiplier += zip_codes_with_target_pop['age_60s']
+                if 'age_70s' in zip_codes_with_target_pop.columns:
+                    age_multiplier += zip_codes_with_target_pop['age_70s']
+                if 'age_over_80' in zip_codes_with_target_pop.columns:
+                    age_multiplier += zip_codes_with_target_pop['age_over_80']
+                age_multiplier = age_multiplier / 100
+            
+            zip_codes_with_target_pop['target_population'] *= age_multiplier
+        
+        # Apply ethnicity filter multiplier
+        if 'ethnicity' in filters and filters['ethnicity'] and filters['ethnicity'] != 'all':
+            ethnicity_multiplier = 0
+            if filters['ethnicity'] == 'white' and 'race_white' in zip_codes_with_target_pop.columns:
+                ethnicity_multiplier = zip_codes_with_target_pop['race_white'] / 100
+            elif filters['ethnicity'] == 'black' and 'race_black' in zip_codes_with_target_pop.columns:
+                ethnicity_multiplier = zip_codes_with_target_pop['race_black'] / 100
+            elif filters['ethnicity'] == 'hispanic' and 'hispanic' in zip_codes_with_target_pop.columns:
+                ethnicity_multiplier = zip_codes_with_target_pop['hispanic'] / 100
+            elif filters['ethnicity'] == 'native' and 'race_native' in zip_codes_with_target_pop.columns:
+                ethnicity_multiplier = zip_codes_with_target_pop['race_native'] / 100
+            elif filters['ethnicity'] == 'asian' and 'race_asian' in zip_codes_with_target_pop.columns:
+                ethnicity_multiplier = zip_codes_with_target_pop['race_asian'] / 100
+            elif filters['ethnicity'] == 'pacific' and 'race_pacific' in zip_codes_with_target_pop.columns:
+                ethnicity_multiplier = zip_codes_with_target_pop['race_pacific'] / 100
+            
+            zip_codes_with_target_pop['target_population'] *= ethnicity_multiplier
+        
+        # Apply income filter multiplier
+        if 'income' in filters and filters['income'] and filters['income'] != 'all':
+            income_multiplier = 0
+            if filters['income'] == 'under50k':
+                under_50k_cols = ['income_household_under_10k', 'income_household_10k_to_15k', 
+                                 'income_household_15k_to_20k', 'income_household_20k_to_25k', 
+                                 'income_household_25k_to_30k', 'income_household_30k_to_35k', 
+                                 'income_household_35k_to_40k', 'income_household_40k_to_45k', 
+                                 'income_household_45k_to_50k']
+                existing_cols = [col for col in under_50k_cols if col in zip_codes_with_target_pop.columns]
+                for col in existing_cols:
+                    income_multiplier += zip_codes_with_target_pop[col]
+                income_multiplier = income_multiplier / 100
+                    
+            elif filters['income'] == '50k-75k':
+                if 'income_household_50k_to_60k' in zip_codes_with_target_pop.columns:
+                    income_multiplier += zip_codes_with_target_pop['income_household_50k_to_60k']
+                if 'income_household_60k_to_75k' in zip_codes_with_target_pop.columns:
+                    income_multiplier += zip_codes_with_target_pop['income_household_60k_to_75k']
+                income_multiplier = income_multiplier / 100
+                    
+            elif filters['income'] == '75k-100k' and 'income_household_75k_to_100k' in zip_codes_with_target_pop.columns:
+                income_multiplier = zip_codes_with_target_pop['income_household_75k_to_100k'] / 100
+            elif filters['income'] == '100k-150k':
+                if 'income_household_100k_to_125k' in zip_codes_with_target_pop.columns:
+                    income_multiplier += zip_codes_with_target_pop['income_household_100k_to_125k']
+                if 'income_household_125k_to_150k' in zip_codes_with_target_pop.columns:
+                    income_multiplier += zip_codes_with_target_pop['income_household_125k_to_150k']
+                income_multiplier = income_multiplier / 100
+                    
+            elif filters['income'] == '150k-200k' and 'income_household_150k_to_200k' in zip_codes_with_target_pop.columns:
+                income_multiplier = zip_codes_with_target_pop['income_household_150k_to_200k'] / 100
+            elif filters['income'] == 'over200k' and 'income_household_over_200k' in zip_codes_with_target_pop.columns:
+                income_multiplier = zip_codes_with_target_pop['income_household_over_200k'] / 100
+            
+            zip_codes_with_target_pop['target_population'] *= income_multiplier
+        
+        # Apply gender filter multiplier
+        if 'gender' in filters and filters['gender'] and filters['gender'] != 'both':
+            gender_multiplier = 0
+            if filters['gender'] == 'male' and 'male' in zip_codes_with_target_pop.columns:
+                gender_multiplier = zip_codes_with_target_pop['male'] / 100
+            elif filters['gender'] == 'female' and 'female' in zip_codes_with_target_pop.columns:
+                gender_multiplier = zip_codes_with_target_pop['female'] / 100
+            
+            zip_codes_with_target_pop['target_population'] *= gender_multiplier
+        
+        # Filter out zip codes with zero or near-zero target population
+        zip_codes_with_target_pop = zip_codes_with_target_pop[zip_codes_with_target_pop['target_population'] > 0]
+        
+        # Calculate total target population across all matching zip codes
+        total_target_population = zip_codes_with_target_pop['target_population'].sum()
+        
+        if total_target_population == 0:
+            return jsonify({"error": "No zip codes match the selected demographic criteria"}), 400
+        
+        # Sort by target population (largest to smallest) and take top 1000
+        sorted_df = zip_codes_with_target_pop.sort_values('target_population', ascending=False)
+        top_1000 = sorted_df.head(1000)
+        
+        # Prepare table data
+        table_data = []
+        for _, row in top_1000.iterrows():
+            # Calculate audience concentration (target audience / total population of that zip code)
+            audience_concentration = (row['target_population'] / row['population']) * 100 if row['population'] > 0 else 0
+            
+            # Calculate market potential
+            market_potential = row['target_population'] * yearly_consumption
+            
+            table_row = {
+                'zipCode': str(row['zip_code']),
+                'city': str(row.get('city', 'Unknown')) if 'city' in row and pd.notna(row.get('city')) else 'Unknown',
+                'state': str(row.get('state', 'Unknown')) if 'state' in row else 'Unknown',
+                'totalPopulation': int(row['population']),
+                'targetAudience': int(row['target_population']),
+                'audienceConcentration': round(audience_concentration, 2),
+                'marketPotential': int(market_potential)
+            }
+            table_data.append(table_row)
+        
+        response = {
+            "tableData": table_data,
+            "totalZipCodes": len(table_data),
+            "totalPopulation": int(total_target_population),
+            "totalMarketPotential": int(total_target_population * yearly_consumption),
+            "filters": filters,
+            "yearlyConsumption": yearly_consumption
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        print(f"Error in get_zip_codes_table: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Failed to get zip codes table: {str(e)}"}), 500
 
 def validate_filters(filters):
     """Validate demographic filters"""

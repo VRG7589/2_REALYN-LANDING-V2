@@ -2,8 +2,15 @@ class USMarketMap {
   constructor() {
     this.map = null;
     this.zipCodeData = [];
+    this.tableData = [];
     this.isMapInitialized = false;
     this.currentFilters = {};
+    this.currentView = 'map'; // 'map' or 'table'
+    
+    // Pagination properties
+    this.currentPage = 1;
+    this.pageSize = 50;
+    this.totalPages = 1;
     
     this.init();
     
@@ -13,7 +20,6 @@ class USMarketMap {
     try {
       await this.initializeMap();
       this.setupEventListeners();
-      this.hidePlaceholder();
     } catch (error) {
       console.error('Failed to initialize map:', error);
       // Removed showError call - no more notifications
@@ -93,30 +99,8 @@ class USMarketMap {
   }
 
   addMajorCities() {
-    // Add major US cities as markers
-    const majorCities = [
-      { name: 'New York', coordinates: [-74.006, 40.7128] },
-      { name: 'Los Angeles', coordinates: [-118.2437, 34.0522] },
-      { name: 'Chicago', coordinates: [-87.6298, 41.8781] },
-      { name: 'Houston', coordinates: [-95.3698, 29.7604] },
-      { name: 'Phoenix', coordinates: [-112.0740, 33.4484] },
-      { name: 'Philadelphia', coordinates: [-75.1652, 39.9526] },
-      { name: 'San Antonio', coordinates: [-98.4936, 29.4241] },
-      { name: 'San Diego', coordinates: [-117.1611, 32.7157] },
-      { name: 'Dallas', coordinates: [-96.7970, 32.7767] },
-      { name: 'San Jose', coordinates: [-121.8863, 37.3382] }
-    ];
-
-    majorCities.forEach(city => {
-      // Create city marker
-      const marker = new maplibregl.Marker({
-        color: '#3B82F6',
-        scale: 0.8
-      })
-      .setLngLat(city.coordinates)
-      .setPopup(new maplibregl.Popup().setHTML(`<strong>${city.name}</strong>`))
-      .addTo(this.map);
-    });
+    // Removed dummy city markers - they were cluttering the map
+    // The map will now only show zip code data when insights are generated
   }
 
   setupEventListeners() {
@@ -135,6 +119,20 @@ class USMarketMap {
       this.generateInsights();
     });
 
+    // Listen for view toggle buttons
+    document.getElementById('map-view-btn').addEventListener('click', () => {
+      this.switchToView('map');
+    });
+
+    document.getElementById('table-view-btn').addEventListener('click', () => {
+      this.switchToView('table');
+    });
+
+    // Listen for export button
+    document.getElementById('export-results-btn').addEventListener('click', () => {
+      this.exportTableData();
+    });
+
     // Listen for yearly consumption input changes
     const yearlyConsumptionInput = document.getElementById('yearly-consumption');
     if (yearlyConsumptionInput) {
@@ -151,6 +149,9 @@ class USMarketMap {
         }
       });
     }
+
+    // Pagination event listeners
+    this.setupPaginationListeners();
   }
 
   async generateInsights() {
@@ -167,14 +168,21 @@ class USMarketMap {
         filters[dropdown.dataset.filter] = dropdown.value;
       });
 
-      // Call your backend API to get zip code data
+      // Get yearly consumption value
+      const yearlyConsumption = parseFloat(document.getElementById('yearly-consumption').value) || 100;
+
+      // Call your backend API to get zip code data for map
       const zipCodeData = await this.fetchZipCodeData(filters);
       
       if (zipCodeData && zipCodeData.zipCodes && zipCodeData.zipCodes.length > 0) {
         // Progressive loading: add zip codes one by one with animation
         await this.visualizeZipCodesProgressively(zipCodeData.zipCodes);
+        
+        // Update summary metrics with the API response data
         this.updateSummaryMetrics(zipCodeData.zipCodes, zipCodeData);
-        this.showSummaryMetrics();
+        
+        // Also fetch table data
+        await this.loadTableData(filters, yearlyConsumption);
         
         // Keep the button text as "Refresh Data"
         const generateBtn = document.getElementById('generate-insights');
@@ -183,10 +191,12 @@ class USMarketMap {
         generateBtn.classList.add('bg-gradient-to-r', 'from-yellow-300', 'to-yellow-400', 'hover:from-yellow-200', 'hover:to-yellow-300');
       } else {
         this.hideSummaryMetrics();
+        this.hideTableData();
       }
     } catch (error) {
       console.error('Error generating insights:', error);
       this.hideSummaryMetrics();
+      this.hideTableData();
     } finally {
       this.hideLoading();
     }
@@ -291,10 +301,10 @@ class USMarketMap {
   }
 
   addZipCodeMarker(zip) {
-    // Create red pin marker for a single zip code
+    // Create small, subtle marker for a single zip code
     const marker = new maplibregl.Marker({
       color: '#FF0000', // Red color
-      scale: 0.6,  // Smaller pins
+      scale: 0.4,  // Much smaller markers
       // Add a subtle animation effect
       element: this.createAnimatedMarkerElement()
     })
@@ -316,18 +326,31 @@ class USMarketMap {
   }
 
   createAnimatedMarkerElement() {
-    // Create a custom marker element with animation
+    // Create a small, subtle pin marker element
     const element = document.createElement('div');
-    element.className = 'custom-marker';
+    element.className = 'custom-pin-marker';
     element.style.cssText = `
-      width: 20px;
-      height: 20px;
-      background: #FF0000;
-      border: 2px solid white;
-      border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      animation: marker-appear 0.5s ease-out;
+      width: 0;
+      height: 0;
+      position: relative;
+      animation: marker-appear 0.3s ease-out;
     `;
+    
+    // Create a small circular marker instead of a complex pin
+    const marker = document.createElement('div');
+    marker.style.cssText = `
+      width: 8px;
+      height: 8px;
+      background: #FF0000;
+      border: 1px solid white;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      position: absolute;
+      top: -4px;
+      left: -4px;
+    `;
+    
+    element.appendChild(marker);
     
     // Add CSS animation if not already present
     if (!document.getElementById('marker-animations')) {
@@ -336,15 +359,11 @@ class USMarketMap {
       style.textContent = `
         @keyframes marker-appear {
           0% { 
-            transform: scale(0) rotate(180deg);
+            transform: scale(0);
             opacity: 0;
           }
-          50% { 
-            transform: scale(1.2) rotate(90deg);
-            opacity: 0.8;
-          }
           100% { 
-            transform: scale(1) rotate(0deg);
+            transform: scale(1);
             opacity: 1;
           }
         }
@@ -396,10 +415,7 @@ class USMarketMap {
     if (loadingEl) loadingEl.style.display = 'none';
   }
 
-  hidePlaceholder() {
-    const placeholderEl = document.getElementById('map-placeholder');
-    if (placeholderEl) placeholderEl.style.display = 'none';
-  }
+
 
   updateSummaryMetrics(zipCodeData, apiResponse) {
     // Debug logging
@@ -434,6 +450,9 @@ class USMarketMap {
     
     // Calculate market size
     this.updateMarketSize(totalPopulation);
+    
+    // Force show the summary metrics section
+    this.showSummaryMetrics();
   }
 
   calculatePopulationCoverage(sortedZipCodes, totalPopulation) {
@@ -478,6 +497,8 @@ class USMarketMap {
     const yearlyConsumption = parseFloat(yearlyConsumptionInput.value) || 100; // Default to 100
     const marketSize = totalPopulation * yearlyConsumption;
     
+    console.log(`Updating market size: ${totalPopulation.toLocaleString()} population × $${yearlyConsumption} = $${marketSize.toLocaleString()}`);
+    
     if (marketSize > 0) {
       // Format as abbreviated value (B for billions, M for millions)
       let formattedMarketSize;
@@ -491,8 +512,10 @@ class USMarketMap {
         formattedMarketSize = `$${marketSize.toFixed(0)}`;
       }
       marketSizeElement.textContent = formattedMarketSize;
+      console.log(`Market size updated to: ${formattedMarketSize}`);
     } else {
       marketSizeElement.textContent = '$0';
+      console.log('Market size set to $0');
     }
   }
 
@@ -501,6 +524,9 @@ class USMarketMap {
     if (summaryMetricsEl) {
       summaryMetricsEl.classList.remove('hidden');
       summaryMetricsEl.style.display = 'block';
+      console.log('Summary metrics section shown');
+    } else {
+      console.error('Summary metrics element not found');
     }
   }
 
@@ -509,7 +535,384 @@ class USMarketMap {
     if (summaryMetricsEl) {
       summaryMetricsEl.classList.add('hidden');
       summaryMetricsEl.style.display = 'none';
+      console.log('Summary metrics section hidden');
     }
+  }
+
+  // View switching methods
+  switchToView(view) {
+    this.currentView = view;
+    
+    // Update button states
+    const mapBtn = document.getElementById('map-view-btn');
+    const tableBtn = document.getElementById('table-view-btn');
+    
+    if (view === 'map') {
+      mapBtn.classList.add('active');
+      tableBtn.classList.remove('active');
+      document.getElementById('map-container').style.display = 'block';
+      document.getElementById('table-container').style.display = 'none';
+    } else {
+      mapBtn.classList.remove('active');
+      tableBtn.classList.add('active');
+      document.getElementById('map-container').style.display = 'none';
+      document.getElementById('table-container').style.display = 'block';
+    }
+  }
+
+  // Table data methods
+  async loadTableData(filters, yearlyConsumption) {
+    try {
+      this.showTableLoading();
+      
+      const response = await fetch('/api/zip-codes-table', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          filters: filters,
+          yearly_consumption: yearlyConsumption
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data && data.tableData && data.tableData.length > 0) {
+        this.tableData = data.tableData;
+        this.populateTable(data.tableData, data);
+        this.hideTableLoading();
+        this.showTableData();
+      } else {
+        this.hideTableLoading();
+        this.showTablePlaceholder();
+      }
+    } catch (error) {
+      console.error('Error loading table data:', error);
+      this.hideTableLoading();
+      this.showTablePlaceholder();
+    }
+  }
+
+  setupPaginationListeners() {
+    // Page size selector
+    const pageSizeSelector = document.getElementById('page-size-selector');
+    if (pageSizeSelector) {
+      pageSizeSelector.addEventListener('change', (e) => {
+        this.pageSize = parseInt(e.target.value);
+        this.currentPage = 1; // Reset to first page
+        this.updatePagination();
+        this.renderCurrentPage();
+      });
+    }
+
+    // Pagination buttons
+    const firstPageBtn = document.getElementById('first-page-btn');
+    const prevPageBtn = document.getElementById('prev-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+    const lastPageBtn = document.getElementById('last-page-btn');
+
+    if (firstPageBtn) {
+      firstPageBtn.addEventListener('click', () => {
+        this.currentPage = 1;
+        this.updatePagination();
+        this.renderCurrentPage();
+      });
+    }
+
+    if (prevPageBtn) {
+      prevPageBtn.addEventListener('click', () => {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.updatePagination();
+          this.renderCurrentPage();
+        }
+      });
+    }
+
+    if (nextPageBtn) {
+      nextPageBtn.addEventListener('click', () => {
+        if (this.currentPage < this.totalPages) {
+          this.currentPage++;
+          this.updatePagination();
+          this.renderCurrentPage();
+        }
+      });
+    }
+
+    if (lastPageBtn) {
+      lastPageBtn.addEventListener('click', () => {
+        this.currentPage = this.totalPages;
+        this.updatePagination();
+        this.renderCurrentPage();
+      });
+    }
+  }
+
+  populateTable(tableData, responseData) {
+    // Store the full table data
+    this.tableData = tableData;
+    
+    // Calculate total pages
+    this.totalPages = Math.ceil(tableData.length / this.pageSize);
+    this.currentPage = 1; // Reset to first page
+
+    // Update table header info
+    document.getElementById('table-displayed-count').textContent = tableData.length.toLocaleString();
+    document.getElementById('table-total-zips').textContent = responseData.totalZipCodes.toLocaleString();
+    document.getElementById('table-total-market').textContent = this.formatCurrency(responseData.totalMarketPotential);
+
+    // Show table content first, then update pagination
+    this.showTableData();
+    
+    // Update pagination controls (now that table content is visible)
+    this.updatePagination();
+    
+    // Render the first page
+    this.renderCurrentPage();
+  }
+
+  updatePagination() {
+    // Check if pagination elements exist before updating
+    const paginationStart = document.getElementById('pagination-start');
+    const paginationEnd = document.getElementById('pagination-end');
+    const paginationTotal = document.getElementById('pagination-total');
+    
+    if (!paginationStart || !paginationEnd || !paginationTotal) {
+      console.log('Pagination elements not found, skipping update');
+      return;
+    }
+
+    // Update pagination info
+    const start = (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, this.tableData.length);
+    
+    paginationStart.textContent = start.toLocaleString();
+    paginationEnd.textContent = end.toLocaleString();
+    paginationTotal.textContent = this.tableData.length.toLocaleString();
+
+    // Update button states
+    const firstPageBtn = document.getElementById('first-page-btn');
+    const prevPageBtn = document.getElementById('prev-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+    const lastPageBtn = document.getElementById('last-page-btn');
+
+    if (firstPageBtn) {
+      firstPageBtn.disabled = this.currentPage === 1;
+    }
+    if (prevPageBtn) {
+      prevPageBtn.disabled = this.currentPage === 1;
+    }
+    if (nextPageBtn) {
+      nextPageBtn.disabled = this.currentPage === this.totalPages;
+    }
+    if (lastPageBtn) {
+      lastPageBtn.disabled = this.currentPage === this.totalPages;
+    }
+
+    // Update page numbers
+    this.updatePageNumbers();
+  }
+
+  updatePageNumbers() {
+    const pageNumbersContainer = document.getElementById('page-numbers');
+    if (!pageNumbersContainer) return;
+
+    pageNumbersContainer.innerHTML = '';
+
+    // Calculate which page numbers to show
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+
+    // Adjust start page if we're near the end
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    // Add page number buttons
+    for (let i = startPage; i <= endPage; i++) {
+      const pageBtn = document.createElement('button');
+      pageBtn.className = `px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 ${
+        i === this.currentPage ? 'bg-brand-blue text-white border-brand-blue' : ''
+      }`;
+      pageBtn.textContent = i;
+      pageBtn.addEventListener('click', () => {
+        this.currentPage = i;
+        this.updatePagination();
+        this.renderCurrentPage();
+      });
+      pageNumbersContainer.appendChild(pageBtn);
+    }
+  }
+
+  renderCurrentPage() {
+    const tableBody = document.getElementById('table-body');
+    if (!tableBody || !this.tableData || this.tableData.length === 0) {
+      console.log('Table body not found or no data available');
+      return;
+    }
+
+    tableBody.innerHTML = '';
+
+    // Calculate which rows to show
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = Math.min(startIndex + this.pageSize, this.tableData.length);
+    const currentPageData = this.tableData.slice(startIndex, endIndex);
+
+    // Populate table rows for current page
+    currentPageData.forEach((row, index) => {
+      const tableRow = document.createElement('div');
+      const isEven = index % 2 === 0;
+      tableRow.className = `grid grid-cols-7 gap-3 px-4 py-3 border-b border-gray-200 hover:bg-blue-50 transition-all duration-200 text-sm cursor-pointer ${isEven ? 'bg-white' : 'bg-gray-50'}`;
+      
+      tableRow.innerHTML = `
+        <div class="font-bold text-gray-900 text-sm">${row.zipCode}</div>
+        <div class="text-gray-800 text-sm truncate font-medium" title="${row.city}">${row.city}</div>
+        <div class="text-gray-700 text-sm font-medium">${row.state}</div>
+        <div class="text-right text-gray-800 text-sm font-semibold">${this.formatNumber(row.totalPopulation)}</div>
+        <div class="text-right font-bold text-gray-900 text-sm">${this.formatNumber(row.targetAudience)}</div>
+        <div class="text-right text-gray-700 text-sm font-semibold">${row.audienceConcentration.toFixed(1)}%</div>
+        <div class="text-right font-bold text-brand-green text-sm">${this.formatCurrency(row.marketPotential)}</div>
+      `;
+      
+      // Add click effect
+      tableRow.addEventListener('mouseenter', () => {
+        tableRow.style.transform = 'translateX(2px)';
+        tableRow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+      });
+      
+      tableRow.addEventListener('mouseleave', () => {
+        tableRow.style.transform = 'translateX(0)';
+        tableRow.style.boxShadow = 'none';
+      });
+      
+      tableBody.appendChild(tableRow);
+    });
+  }
+
+  formatCurrency(amount) {
+    if (amount >= 1000000000) {
+      return `$${(amount / 1000000000).toFixed(1)}B`;
+    } else if (amount >= 1000000) {
+      return `$${(amount / 1000000).toFixed(1)}M`;
+    } else if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(1)}K`;
+    } else {
+      return `$${amount.toFixed(0)}`;
+    }
+  }
+
+  formatNumber(number) {
+    if (number >= 1000000) {
+      return `${(number / 1000000).toFixed(1)}M`;
+    } else if (number >= 1000) {
+      return `${(number / 1000).toFixed(1)}K`;
+    } else {
+      return number.toLocaleString();
+    }
+  }
+
+  showTableLoading() {
+    document.getElementById('table-loading').style.display = 'flex';
+    document.getElementById('table-placeholder').style.display = 'none';
+    document.getElementById('table-content').style.display = 'none';
+  }
+
+  hideTableLoading() {
+    document.getElementById('table-loading').style.display = 'none';
+  }
+
+  showTableData() {
+    document.getElementById('table-placeholder').style.display = 'none';
+    document.getElementById('table-content').style.display = 'block';
+    document.getElementById('export-results-btn').style.display = 'block';
+  }
+
+  showTablePlaceholder() {
+    document.getElementById('table-placeholder').style.display = 'flex';
+    document.getElementById('table-content').style.display = 'none';
+  }
+
+  hideTableData() {
+    document.getElementById('table-placeholder').style.display = 'flex';
+    document.getElementById('table-content').style.display = 'none';
+    document.getElementById('export-results-btn').style.display = 'none';
+  }
+
+  exportTableData() {
+    if (!this.tableData || this.tableData.length === 0) {
+      alert('No data to export. Please generate insights first.');
+      return;
+    }
+
+    // Get current filters for filename
+    const filters = {};
+    document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
+      filters[dropdown.dataset.filter] = dropdown.value;
+    });
+
+    // Create CSV content - export ALL data, not just current page
+    const headers = ['ZIP Code', 'City', 'State', 'Total Population', 'Target Audience', 'Audience Concentration (%)', 'Market Potential ($)'];
+    const csvContent = [
+      headers.join(','),
+      ...this.tableData.map(row => [
+        row.zipCode,
+        `"${row.city}"`,
+        row.state,
+        row.totalPopulation,
+        row.targetAudience,
+        row.audienceConcentration.toFixed(2),
+        row.marketPotential
+      ].join(','))
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Generate filename with timestamp and filters
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    const filterString = Object.entries(filters)
+      .filter(([key, value]) => value !== 'all' && value !== 'both')
+      .map(([key, value]) => `${key}-${value}`)
+      .join('_');
+    
+    const filename = `zip_codes_analysis_${filterString || 'all_filters'}_${timestamp}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Show success message
+    this.showExportSuccess();
+  }
+
+  showExportSuccess() {
+    // Create a temporary success message
+    const successMsg = document.createElement('div');
+    successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
+    successMsg.innerHTML = `
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Export successful! CSV file downloaded.
+    `;
+    
+    document.body.appendChild(successMsg);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      successMsg.remove();
+    }, 3000);
   }
 
   // Removed all notification methods:

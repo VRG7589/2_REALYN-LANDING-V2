@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Realyn.ai: The Growth GPS Every Brand Needs</title>
   <meta name="description" content="Discover your top-performing zip codes with our customer concentration map. Analyze demographics, identify your 80/20 markets, and optimize your marketing spend for maximum ROI." />
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Assets/favicon.ico') }}">
@@ -202,6 +205,57 @@
       background-color: #3B82F6 !important;
       color: white !important;
     }
+
+    /* View Toggle Button Styles */
+    .view-toggle-btn {
+      @apply text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200;
+    }
+
+    .view-toggle-btn.active {
+      @apply bg-white/30 text-white shadow-sm;
+    }
+
+    .view-toggle-btn:hover {
+      @apply transform scale-105;
+    }
+
+    /* Custom scrollbar styles */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Table scrollbar */
+    .table-scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .table-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+
+    .table-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .table-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
   </style>
 </head>
 
@@ -253,85 +307,108 @@
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 max-w-7xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
         
         <!-- Left Panel: Demographic Filters (1/5 = 20% on desktop, full width on mobile) -->
-        <div class="lg:col-span-1 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-xl">
+        <div class="lg:col-span-1 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-xl flex flex-col min-h-[500px] lg:min-h-[600px]">
           <h3 class="text-lg font-semibold mb-6 text-white text-elegant-bold">Target Market</h3>
           
-          <!-- Gender Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Gender</label>
-            <select class="filter-dropdown w-full" data-filter="gender">
-              <option value="both">Both</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-          
-          <!-- Ethnicity/Race Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Ethnicity/Race</label>
-            <select class="filter-dropdown w-full" data-filter="ethnicity">
-              <option value="all">All</option>
-              <option value="white">White</option>
-              <option value="black">Black</option>
-              <option value="hispanic">Hispanic</option>
-              <option value="native">Native</option>
-              <option value="asian">Asian</option>
-              <option value="pacific">Pacific</option>
-              <option value="others">Others</option>
-              <option value="multiple">Multiple</option>
-            </select>
-          </div>
-          
-          <!-- Age Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Age</label>
-            <select class="filter-dropdown w-full" data-filter="age">
-              <option value="all">All Ages</option>
-              <option value="under20">Under 20</option>
-              <option value="20-29">20-29</option>
-              <option value="30-39">30-39</option>
-              <option value="40-49">40-49</option>
-              <option value="50-59">50-59</option>
-              <option value="60plus">60+</option>
-            </select>
-          </div>
-          
-          <!-- Household Income Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Household Income</label>
-            <select class="filter-dropdown w-full" data-filter="income">
-              <option value="all">All Incomes</option>
-              <option value="under50k">Under $50K</option>
-              <option value="50k-75k">$50K-$75K</option>
-              <option value="75k-100k">$75K-$100K</option>
-              <option value="100k-150k">$100K-$150K</option>
-              <option value="150k-200k">$150K-$200K</option>
-              <option value="over200k">Over $200K</option>
-            </select>
-          </div>
-          
-          <!-- Yearly Consumption Input -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Yearly Consumption Value</label>
-            <div class="flex items-center gap-1">
-              <span class="text-white/80 text-sm">$</span>
-              <input type="number" id="yearly-consumption" value="100" placeholder="100" 
-                     class="filter-dropdown flex-1 min-w-0">
-              <span class="text-white/80 text-xs">per capita</span>
+          <!-- Scrollable Content Area -->
+          <div class="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
+            <!-- Gender Filter -->
+            <div>
+              <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Gender</label>
+              <select class="filter-dropdown w-full" data-filter="gender">
+                <option value="both">Both</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            
+            <!-- Ethnicity/Race Filter -->
+            <div>
+              <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Ethnicity/Race</label>
+              <select class="filter-dropdown w-full" data-filter="ethnicity">
+                <option value="all">All</option>
+                <option value="white">White</option>
+                <option value="black">Black</option>
+                <option value="hispanic">Hispanic</option>
+                <option value="native">Native</option>
+                <option value="asian">Asian</option>
+                <option value="pacific">Pacific</option>
+                <option value="others">Others</option>
+                <option value="multiple">Multiple</option>
+              </select>
+            </div>
+            
+            <!-- Age Filter -->
+            <div>
+              <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Age</label>
+              <select class="filter-dropdown w-full" data-filter="age">
+                <option value="all">All Ages</option>
+                <option value="under20">Under 20</option>
+                <option value="20-29">20-29</option>
+                <option value="30-39">30-39</option>
+                <option value="40-49">40-49</option>
+                <option value="50-59">50-59</option>
+                <option value="60plus">60+</option>
+              </select>
+            </div>
+            
+            <!-- Household Income Filter -->
+            <div>
+              <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Household Income</label>
+              <select class="filter-dropdown w-full" data-filter="income">
+                <option value="all">All Incomes</option>
+                <option value="under50k">Under $50K</option>
+                <option value="50k-75k">$50K-$75K</option>
+                <option value="75k-100k">$75K-$100K</option>
+                <option value="100k-150k">$100K-$150K</option>
+                <option value="150k-200k">$150K-$200K</option>
+                <option value="over200k">Over $200K</option>
+              </select>
+            </div>
+            
+            <!-- Yearly Consumption Input -->
+            <div>
+              <label class="block text-sm font-medium text-white/90 mb-2 text-elegant">Yearly Consumption Value</label>
+              <div class="flex items-center gap-1">
+                <span class="text-white/80 text-sm">$</span>
+                <input type="number" id="yearly-consumption" value="100" placeholder="100" 
+                       class="filter-dropdown flex-1 min-w-0">
+                <span class="text-white/80 text-xs">per capita</span>
+              </div>
             </div>
           </div>
           
-          <!-- Generate Insights Button -->
-          <button id="generate-insights" class="w-full bg-gradient-to-r from-yellow-300 to-yellow-400 text-brand-darkgray py-3 px-4 rounded-xl font-semibold text-sm hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:from-yellow-200 hover:to-yellow-300">
-            Refresh Data
-          </button>
+          <!-- Generate Insights Button - Fixed at bottom -->
+          <div class="mt-6 pt-4 border-t border-white/20">
+            <button id="generate-insights" class="w-full bg-gradient-to-r from-yellow-300 to-yellow-400 text-brand-darkgray py-3 px-4 rounded-xl font-semibold text-sm hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:from-yellow-200 hover:to-yellow-300">
+              Refresh Data
+            </button>
+          </div>
         </div>
         
-        <!-- Right Panel: US Map (4/5 = 80% on desktop, full width on mobile) -->
+        <!-- Right Panel: US Map and Table View (4/5 = 80% on desktop, full width on mobile) -->
         <div class="lg:col-span-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 lg:p-8 border border-white/20 shadow-xl flex flex-col min-h-[500px] lg:min-h-[600px]">
           
+          <!-- View Toggle Section -->
+          <div class="mb-6 flex justify-center">
+            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-1 border border-white/30">
+              <button id="map-view-btn" class="view-toggle-btn active px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-13 7l9-4.5m9 4.5l-9 4.5"></path>
+                </svg>
+                Map View
+              </button>
+              <button id="table-view-btn" class="view-toggle-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0V4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path>
+                </svg>
+                Table View
+              </button>
+            </div>
+          </div>
+          
           <!-- Summary Metrics Section -->
-          <div id="summary-metrics" class="mb-6 p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30 hidden">
+          <div id="summary-metrics" class="mb-6 p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30" style="display: none;">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               <!-- Market Size -->
               <div class="bg-white rounded-lg p-3 text-center shadow-sm">
@@ -363,30 +440,176 @@
             </div>
           </div>
           
+          <!-- Map View Container -->
           <div id="map-container" class="w-full h-full rounded-xl overflow-hidden relative flex-1">
             <div id="map" class="w-full h-full"></div>
-            <div id="map-loading" class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center">
+            <div id="map-loading" class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center" style="display: none;">
               <div class="text-center bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/30 max-w-md mx-4">
                 <h3 class="text-lg font-semibold text-brand-darkgray mb-2">Loading Market Data</h3>
                 <p class="text-brand-gray text-sm font-medium">Initializing map...</p>
               </div>
             </div>
-            <div id="map-placeholder" class="absolute inset-0 bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <div class="text-center">
-                <div class="w-24 lg:w-32 h-24 lg:h-32 bg-white/20 rounded-full flex items-center justify-center mb-4 lg:mb-6 mx-auto">
-                  <svg class="w-12 lg:w-16 h-12 lg:h-16 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-13 7l9-4.5m9 4.5l-9 4.5"></path>
-                  </svg>
+
+          </div>
+          
+          <!-- Table View Container -->
+          <div id="table-container" class="w-full h-full rounded-xl overflow-hidden relative flex-1" style="display: none;">
+            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 h-full flex flex-col">
+              <!-- Table Header -->
+              <div class="mb-4 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-white text-elegant-bold">Top 1000 Zip Codes</h3>
+                <div class="flex items-center gap-4">
+                  <div class="text-sm text-white/80">
+                    <span id="table-displayed-count">0</span> of <span id="table-total-zips">0</span> zip codes • 
+                    <span id="table-total-market">$0</span> total market potential
+                  </div>
+                  <button id="export-results-btn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" style="display: none;">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export Results
+                  </button>
                 </div>
-                <h3 class="text-xl lg:text-2xl font-semibold mb-3 lg:mb-4 text-white text-elegant-bold">Interactive US Market Map</h3>
-                <p class="text-white/80 text-elegant mb-4 lg:mb-6 max-w-md mx-auto text-sm lg:text-base">
-                  Select your demographic filters to see market opportunities highlighted across the United States
-                </p>
-                <div class="bg-white/20 rounded-xl p-4 lg:p-6 w-full max-w-2xl mx-auto">
-                  <p class="text-xs lg:text-sm text-white/70 text-elegant leading-relaxed">
-                    This interactive map will visualize the top 1000 zip codes matching your selected criteria, showing market concentration, 
-                    growth opportunities, and demographic insights across different regions.
+              </div>
+              
+              <!-- Table Loading -->
+              <div id="table-loading" class="flex-1 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <svg class="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                  </div>
+                  <p class="text-white text-base font-semibold drop-shadow-md">Loading zip code data...</p>
+                </div>
+              </div>
+              
+              <!-- Table Placeholder -->
+              <div id="table-placeholder" class="flex-1 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0V4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path>
+                    </svg>
+                  </div>
+                  <h3 class="text-2xl font-bold mb-3 text-white text-elegant-bold drop-shadow-lg">Zip Code Data Table</h3>
+                  <p class="text-white text-elegant mb-4 max-w-md mx-auto text-base font-medium drop-shadow-md">
+                    Select your demographic filters and click "Refresh Data" to see the top 1000 zip codes with detailed market insights
                   </p>
+                  <div class="bg-gradient-to-r from-white/30 to-white/20 backdrop-blur-sm rounded-xl p-6 w-full max-w-2xl mx-auto border border-white/30 shadow-lg">
+                    <p class="text-sm text-white font-medium text-elegant leading-relaxed drop-shadow-sm">
+                      The table will show ZIP Code, City, State, Total Population, Target Audience, Audience Concentration, and Market Potential for each location.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Table Content -->
+              <div id="table-content" class="flex-1 overflow-hidden" style="display: none;">
+                <div class="bg-white rounded-lg shadow-sm h-full flex flex-col">
+                  <!-- Table Header - Fixed -->
+                  <div class="bg-gradient-to-r from-gray-800 to-gray-700 px-4 py-3 border-b-2 border-gray-600 flex-shrink-0 shadow-sm">
+                    <div class="grid grid-cols-7 gap-3 text-sm font-bold text-white uppercase tracking-wider">
+                      <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        ZIP Code
+                      </div>
+                      <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        City
+                      </div>
+                      <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
+                        </svg>
+                        State
+                      </div>
+                      <div class="text-right flex items-center justify-end">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Total Pop
+                      </div>
+                      <div class="text-right flex items-center justify-end">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Target Audience
+                      </div>
+                      <div class="text-right flex items-center justify-end">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Concentration
+                      </div>
+                      <div class="text-right flex items-center justify-end">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                        Market Potential
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Table Body - Fixed Height for Pagination -->
+                  <div id="table-body" class="flex-1 overflow-y-auto table-scrollbar" style="max-height: 400px;">
+                    <!-- Table rows will be populated here -->
+                  </div>
+                  
+                  <!-- Pagination Controls -->
+                  <div id="pagination-controls" class="bg-gray-50 border-t border-gray-200 px-4 py-3 flex-shrink-0">
+                    <div class="flex items-center justify-between">
+                      <!-- Page Size Selector -->
+                      <div class="flex items-center space-x-2">
+                        <label class="text-sm text-gray-700 font-medium">Rows per page:</label>
+                        <select id="page-size-selector" class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-blue/30">
+                          <option value="25">25</option>
+                          <option value="50" selected>50</option>
+                          <option value="100">100</option>
+                        </select>
+                      </div>
+                      
+                      <!-- Pagination Info -->
+                      <div id="pagination-info" class="text-sm text-gray-700">
+                        Showing <span id="pagination-start">1</span> to <span id="pagination-end">50</span> of <span id="pagination-total">1000</span> results
+                      </div>
+                      
+                      <!-- Pagination Buttons -->
+                      <div class="flex items-center space-x-1">
+                        <button id="first-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+                          </svg>
+                        </button>
+                        <button id="prev-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                          </svg>
+                        </button>
+                        
+                        <!-- Page Numbers -->
+                        <div id="page-numbers" class="flex items-center space-x-1">
+                          <!-- Page numbers will be populated here -->
+                        </div>
+                        
+                        <button id="next-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </button>
+                        <button id="last-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -685,5 +908,5 @@
   <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
   
   <!-- Map Component JavaScript -->
-  <script src="{{ url_for('static', filename='map-component.js') }}"></script>
+  <script src="{{ url_for('static', filename='map-component.js') }}?v=3"></script>
   </html>
