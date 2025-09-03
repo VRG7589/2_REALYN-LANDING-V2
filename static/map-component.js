@@ -119,18 +119,25 @@ class USMarketMap {
       this.generateInsights();
     });
 
-    // Listen for view toggle buttons
-    document.getElementById('map-view-btn').addEventListener('click', () => {
-      this.switchToView('map');
-    });
+    // Listen for view toggle buttons (new tab system)
+    const mapTab = document.getElementById('map-tab');
+    const tableTab = document.getElementById('table-tab');
+    
+    if (mapTab) {
+      mapTab.addEventListener('click', () => {
+        this.switchToView('map');
+      });
+    }
 
-    document.getElementById('table-view-btn').addEventListener('click', () => {
-      this.switchToView('table');
-    });
+    if (tableTab) {
+      tableTab.addEventListener('click', () => {
+        this.switchToView('table');
+      });
+    }
 
     // Listen for export button
     document.getElementById('export-results-btn').addEventListener('click', () => {
-      this.exportTableData();
+      this.exportToPDF();
     });
 
     // Listen for yearly consumption input changes
@@ -229,27 +236,6 @@ class USMarketMap {
     }
   }
 
-  getSampleZipCodeData(filters) {
-    // Sample data for demonstration - replace with actual API call
-    const sampleZipCodes = [
-      { zipCode: '10001', latitude: 40.7505, longitude: -73.9965, population: 50000, state: 'NY' },
-      { zipCode: '10002', latitude: 40.7168, longitude: -73.9861, population: 45000, state: 'NY' },
-      { zipCode: '90210', latitude: 34.1030, longitude: -118.4105, population: 35000, state: 'CA' },
-      { zipCode: '90211', latitude: 34.0668, longitude: -118.3801, population: 40000, state: 'CA' },
-      { zipCode: '60601', latitude: 41.8857, longitude: -87.6225, population: 60000, state: 'IL' },
-      { zipCode: '60602', latitude: 41.8839, longitude: -87.6318, population: 55000, state: 'IL' },
-      { zipCode: '77001', latitude: 29.7604, longitude: -95.3698, population: 48000, state: 'TX' },
-      { zipCode: '77002', latitude: 29.7604, longitude: -95.3698, population: 52000, state: 'TX' }
-    ];
-
-    // Filter based on demo criteria
-    if (filters.gender === 'female') {
-      return { zipCodes: sampleZipCodes.slice(0, 4), totalZipCodes: 4, totalPopulation: 180000, fiftyPercentPopulation: 90000 };
-    }
-    
-    return { zipCodes: sampleZipCodes, totalZipCodes: 8, totalPopulation: 385000, fiftyPercentPopulation: 192500 };
-  }
-
   async visualizeZipCodesProgressively(zipCodeData) {
     // Store zip code data for later use
     this.zipCodeData = zipCodeData;
@@ -266,8 +252,8 @@ class USMarketMap {
     this.clearZipCodeMarkers();
 
     // Progressive loading: add zip codes in batches with animation
-    const batchSize = 5; // Show 5 zip codes at a time
-    const delayBetweenBatches = 100; // 100ms delay between batches
+    const batchSize = 100; // Show 100 zip codes at a time
+    const delayBetweenBatches = 50; // 50ms delay between batches
     
     for (let i = 0; i < zipCodeData.length; i += batchSize) {
       const batch = zipCodeData.slice(i, i + batchSize);
@@ -297,6 +283,8 @@ class USMarketMap {
         padding: 50,
         duration: 1000
       });
+      
+
     }
   }
 
@@ -405,6 +393,8 @@ class USMarketMap {
     }
   }
 
+
+
   showLoading() {
     const loadingEl = document.getElementById('map-loading');
     if (loadingEl) loadingEl.style.display = 'flex';
@@ -442,17 +432,20 @@ class USMarketMap {
       topZips80 = Math.ceil(topZips50 * 1.6);
     }
     
-    // Update UI elements with formatted population in millions
-    const populationInMillions = (totalPopulation / 1000000).toFixed(1);
-    document.getElementById('total-population').textContent = `${populationInMillions}M`;
-    document.getElementById('top-zips-50').textContent = topZips50;
-    document.getElementById('top-zips-80').textContent = topZips80;
+    // Update UI elements with formatted population
+    document.getElementById('total-population').textContent = totalPopulation.toLocaleString();
+    
+    // Update top 50% zip code count
+    document.getElementById('top50-zip-count').textContent = topZips50.toLocaleString();
     
     // Calculate market size
     this.updateMarketSize(totalPopulation);
     
-    // Force show the summary metrics section
-    this.showSummaryMetrics();
+    // Update demographics summary
+    this.updateDemographicsSummary();
+    
+    // Force show the results header and tab navigation
+    this.showResultsHeader();
   }
 
   calculatePopulationCoverage(sortedZipCodes, totalPopulation) {
@@ -519,6 +512,57 @@ class USMarketMap {
     }
   }
 
+  updateDemographicsSummary() {
+    const profileSummaryElement = document.getElementById('profile-summary');
+    if (!profileSummaryElement) return;
+
+    // Get current filter values
+    const gender = document.querySelector('[data-filter="gender"]')?.value || 'both';
+    const ethnicity = document.querySelector('[data-filter="ethnicity"]')?.value || 'all';
+    const age = document.querySelector('[data-filter="age"]')?.value || 'all';
+    const income = document.querySelector('[data-filter="income"]')?.value || 'all';
+    const yearlyConsumption = document.getElementById('yearly-consumption')?.value || '100';
+
+    // Format the profile summary
+    const genderText = gender === 'both' ? 'All genders' : gender;
+    const ethnicityText = ethnicity === 'all' ? 'all ethnicities' : ethnicity;
+    const ageText = age === 'all' ? 'all ages' : age;
+    const incomeText = income === 'all' ? 'all income levels' : income.replace(/([A-Z])/g, ' $1').toLowerCase();
+    
+    const profileText = `${genderText}, ${ethnicityText}, ${ageText}, ${incomeText} • $${yearlyConsumption} per capita`;
+    profileSummaryElement.textContent = profileText;
+  }
+
+  showResultsHeader() {
+    const resultsHeaderEl = document.getElementById('results-header');
+    const tabNavigationEl = document.getElementById('tab-navigation');
+    
+    if (resultsHeaderEl) {
+      resultsHeaderEl.style.display = 'block';
+      console.log('Results header shown');
+    }
+    
+    if (tabNavigationEl) {
+      tabNavigationEl.style.display = 'flex';
+      console.log('Tab navigation shown');
+    }
+  }
+
+  hideResultsHeader() {
+    const resultsHeaderEl = document.getElementById('results-header');
+    const tabNavigationEl = document.getElementById('tab-navigation');
+    
+    if (resultsHeaderEl) {
+      resultsHeaderEl.style.display = 'none';
+      console.log('Results header hidden');
+    }
+    
+    if (tabNavigationEl) {
+      tabNavigationEl.style.display = 'none';
+      console.log('Tab navigation hidden');
+    }
+  }
+
   showSummaryMetrics() {
     const summaryMetricsEl = document.getElementById('summary-metrics');
     if (summaryMetricsEl) {
@@ -543,20 +587,9 @@ class USMarketMap {
   switchToView(view) {
     this.currentView = view;
     
-    // Update button states
-    const mapBtn = document.getElementById('map-view-btn');
-    const tableBtn = document.getElementById('table-view-btn');
-    
-    if (view === 'map') {
-      mapBtn.classList.add('active');
-      tableBtn.classList.remove('active');
-      document.getElementById('map-container').style.display = 'block';
-      document.getElementById('table-container').style.display = 'none';
-    } else {
-      mapBtn.classList.remove('active');
-      tableBtn.classList.add('active');
-      document.getElementById('map-container').style.display = 'none';
-      document.getElementById('table-container').style.display = 'block';
+    // Use the global showSlide function
+    if (typeof showSlide === 'function') {
+      showSlide(view);
     }
   }
 
@@ -586,7 +619,6 @@ class USMarketMap {
         this.tableData = data.tableData;
         this.populateTable(data.tableData, data);
         this.hideTableLoading();
-        this.showTableData();
       } else {
         this.hideTableLoading();
         this.showTablePlaceholder();
@@ -599,56 +631,24 @@ class USMarketMap {
   }
 
   setupPaginationListeners() {
-    // Page size selector
-    const pageSizeSelector = document.getElementById('page-size-selector');
-    if (pageSizeSelector) {
-      pageSizeSelector.addEventListener('change', (e) => {
-        this.pageSize = parseInt(e.target.value);
-        this.currentPage = 1; // Reset to first page
-        this.updatePagination();
-        this.renderCurrentPage();
-      });
-    }
-
-    // Pagination buttons
-    const firstPageBtn = document.getElementById('first-page-btn');
-    const prevPageBtn = document.getElementById('prev-page-btn');
-    const nextPageBtn = document.getElementById('next-page-btn');
-    const lastPageBtn = document.getElementById('last-page-btn');
-
-    if (firstPageBtn) {
-      firstPageBtn.addEventListener('click', () => {
-        this.currentPage = 1;
-        this.updatePagination();
-        this.renderCurrentPage();
-      });
-    }
-
+    // Previous page button
+    const prevPageBtn = document.getElementById('prev-page');
     if (prevPageBtn) {
       prevPageBtn.addEventListener('click', () => {
         if (this.currentPage > 1) {
-          this.currentPage--;
-          this.updatePagination();
-          this.renderCurrentPage();
+          this.goToPage(this.currentPage - 1);
         }
       });
     }
 
+    // Next page button
+    const nextPageBtn = document.getElementById('next-page');
     if (nextPageBtn) {
       nextPageBtn.addEventListener('click', () => {
-        if (this.currentPage < this.totalPages) {
-          this.currentPage++;
-          this.updatePagination();
-          this.renderCurrentPage();
+        const totalPages = Math.ceil(this.totalRows / this.rowsPerPage);
+        if (this.currentPage < totalPages) {
+          this.goToPage(this.currentPage + 1);
         }
-      });
-    }
-
-    if (lastPageBtn) {
-      lastPageBtn.addEventListener('click', () => {
-        this.currentPage = this.totalPages;
-        this.updatePagination();
-        this.renderCurrentPage();
       });
     }
   }
@@ -657,143 +657,147 @@ class USMarketMap {
     // Store the full table data
     this.tableData = tableData;
     
-    // Calculate total pages
-    this.totalPages = Math.ceil(tableData.length / this.pageSize);
-    this.currentPage = 1; // Reset to first page
-
-    // Update table header info
-    document.getElementById('table-displayed-count').textContent = tableData.length.toLocaleString();
-    document.getElementById('table-total-zips').textContent = responseData.totalZipCodes.toLocaleString();
-    document.getElementById('table-total-market').textContent = this.formatCurrency(responseData.totalMarketPotential);
-
-    // Show table content first, then update pagination
-    this.showTableData();
+    // Initialize pagination directly
+    this.initializePagination(tableData);
     
-    // Update pagination controls (now that table content is visible)
-    this.updatePagination();
+    // Show the table data after populating
+    this.showTableData();
+  }
+
+  initializePagination(tableData) {
+    // Set up pagination state
+    this.currentPage = 1;
+    this.rowsPerPage = 10;
+    this.totalRows = tableData.length;
+    this.allTableData = tableData;
     
     // Render the first page
-    this.renderCurrentPage();
+    this.renderTablePage();
+    this.updatePagination();
+    
+    // Show pagination controls
+    const paginationControls = document.getElementById('pagination-controls');
+    if (paginationControls) {
+      paginationControls.style.display = 'flex';
+    }
+  }
+
+  renderTablePage() {
+    const tbody = document.getElementById('zip-table-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    const startIndex = (this.currentPage - 1) * this.rowsPerPage;
+    const endIndex = Math.min(startIndex + this.rowsPerPage, this.allTableData.length);
+    
+    for (let i = startIndex; i < endIndex; i++) {
+      const row = this.allTableData[i];
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-gray-50';
+      
+      const concentration = row.totalPopulation > 0 ? 
+        ((row.targetAudience / row.totalPopulation) * 100).toFixed(1) : 0;
+      
+      tr.innerHTML = `
+        <td class="px-4 py-2 text-xs text-gray-600">${i + 1}</td>
+        <td class="px-4 py-2 text-xs font-medium text-gray-900">${row.zipCode}</td>
+        <td class="px-4 py-2 text-xs text-gray-600">${row.city || 'N/A'}, ${row.state || 'N/A'}</td>
+        <td class="px-4 py-2 text-xs text-right text-gray-900">${row.targetAudience.toLocaleString()}</td>
+        <td class="px-4 py-2 text-xs text-right text-gray-600">${row.totalPopulation.toLocaleString()}</td>
+        <td class="px-4 py-2 text-xs text-right text-gray-900">${concentration}%</td>
+        <td class="px-4 py-2 text-xs text-right font-medium text-green-600">$${row.marketPotential.toLocaleString()}</td>
+      `;
+      tbody.appendChild(tr);
+    }
   }
 
   updatePagination() {
-    // Check if pagination elements exist before updating
-    const paginationStart = document.getElementById('pagination-start');
-    const paginationEnd = document.getElementById('pagination-end');
-    const paginationTotal = document.getElementById('pagination-total');
+    const totalPages = Math.ceil(this.totalRows / this.rowsPerPage);
+    const startRow = (this.currentPage - 1) * this.rowsPerPage + 1;
+    const endRow = Math.min(this.currentPage * this.rowsPerPage, this.totalRows);
     
-    if (!paginationStart || !paginationEnd || !paginationTotal) {
-      console.log('Pagination elements not found, skipping update');
-      return;
-    }
-
     // Update pagination info
-    const start = (this.currentPage - 1) * this.pageSize + 1;
-    const end = Math.min(this.currentPage * this.pageSize, this.tableData.length);
+    const paginationInfo = document.getElementById('pagination-info');
+    if (paginationInfo) {
+      paginationInfo.textContent = `Showing ${startRow}-${endRow} of ${this.totalRows}`;
+    }
     
-    paginationStart.textContent = start.toLocaleString();
-    paginationEnd.textContent = end.toLocaleString();
-    paginationTotal.textContent = this.tableData.length.toLocaleString();
-
-    // Update button states
-    const firstPageBtn = document.getElementById('first-page-btn');
-    const prevPageBtn = document.getElementById('prev-page-btn');
-    const nextPageBtn = document.getElementById('next-page-btn');
-    const lastPageBtn = document.getElementById('last-page-btn');
-
-    if (firstPageBtn) {
-      firstPageBtn.disabled = this.currentPage === 1;
-    }
-    if (prevPageBtn) {
-      prevPageBtn.disabled = this.currentPage === 1;
-    }
-    if (nextPageBtn) {
-      nextPageBtn.disabled = this.currentPage === this.totalPages;
-    }
-    if (lastPageBtn) {
-      lastPageBtn.disabled = this.currentPage === this.totalPages;
-    }
-
-    // Update page numbers
-    this.updatePageNumbers();
-  }
-
-  updatePageNumbers() {
+    // Update previous/next buttons
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    if (prevBtn) prevBtn.disabled = this.currentPage === 1;
+    if (nextBtn) nextBtn.disabled = this.currentPage === totalPages;
+    
+    // Generate page numbers
     const pageNumbersContainer = document.getElementById('page-numbers');
-    if (!pageNumbersContainer) return;
-
-    pageNumbersContainer.innerHTML = '';
-
-    // Calculate which page numbers to show
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-
-    // Adjust start page if we're near the end
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    // Add page number buttons
-    for (let i = startPage; i <= endPage; i++) {
-      const pageBtn = document.createElement('button');
-      pageBtn.className = `px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 ${
-        i === this.currentPage ? 'bg-brand-blue text-white border-brand-blue' : ''
-      }`;
-      pageBtn.textContent = i;
-      pageBtn.addEventListener('click', () => {
-        this.currentPage = i;
-        this.updatePagination();
-        this.renderCurrentPage();
-      });
-      pageNumbersContainer.appendChild(pageBtn);
+    if (pageNumbersContainer) {
+      pageNumbersContainer.innerHTML = '';
+      
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        pageBtn.className = `px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 ${
+          i === this.currentPage ? 'bg-blue-500 text-white border-blue-500' : 'bg-white'
+        }`;
+        pageBtn.onclick = () => this.goToPage(i);
+        pageNumbersContainer.appendChild(pageBtn);
+      }
     }
   }
 
-  renderCurrentPage() {
-    const tableBody = document.getElementById('table-body');
-    if (!tableBody || !this.tableData || this.tableData.length === 0) {
-      console.log('Table body not found or no data available');
-      return;
+  goToPage(page) {
+    const totalPages = Math.ceil(this.totalRows / this.rowsPerPage);
+    if (page >= 1 && page <= totalPages) {
+      this.currentPage = page;
+      this.renderTablePage();
+      this.updatePagination();
     }
+  }
+
+  populateZipTable(tableData) {
+    const tableBody = document.getElementById('zip-table-body');
+    if (!tableBody) return;
 
     tableBody.innerHTML = '';
 
-    // Calculate which rows to show
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = Math.min(startIndex + this.pageSize, this.tableData.length);
-    const currentPageData = this.tableData.slice(startIndex, endIndex);
+    // Sort by target audience (highest first)
+    const sortedData = tableData.sort((a, b) => b.targetAudience - a.targetAudience);
 
-    // Populate table rows for current page
-    currentPageData.forEach((row, index) => {
-      const tableRow = document.createElement('div');
-      const isEven = index % 2 === 0;
-      tableRow.className = `grid grid-cols-7 gap-3 px-4 py-3 border-b border-gray-200 hover:bg-blue-50 transition-all duration-200 text-sm cursor-pointer ${isEven ? 'bg-white' : 'bg-gray-50'}`;
+    sortedData.forEach((row, index) => {
+      const tableRow = document.createElement('tr');
+      tableRow.className = 'hover:bg-gray-50 transition-colors';
+      
+      const concentration = row.totalPopulation > 0 ? 
+        ((row.targetAudience / row.totalPopulation) * 100).toFixed(1) : 0;
       
       tableRow.innerHTML = `
-        <div class="font-bold text-gray-900 text-sm">${row.zipCode}</div>
-        <div class="text-gray-800 text-sm truncate font-medium" title="${row.city}">${row.city}</div>
-        <div class="text-gray-700 text-sm font-medium">${row.state}</div>
-        <div class="text-right text-gray-800 text-sm font-semibold">${this.formatNumber(row.totalPopulation)}</div>
-        <div class="text-right font-bold text-gray-900 text-sm">${this.formatNumber(row.targetAudience)}</div>
-        <div class="text-right text-gray-700 text-sm font-semibold">${row.audienceConcentration.toFixed(1)}%</div>
-        <div class="text-right font-bold text-brand-green text-sm">${this.formatCurrency(row.marketPotential)}</div>
+        <td class="px-4 py-3">
+          <div class="w-6 h-6 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+            ${index + 1}
+          </div>
+        </td>
+        <td class="px-4 py-3 font-semibold text-gray-900">${row.zipCode}</td>
+        <td class="px-4 py-3 text-gray-700">${row.city || 'N/A'}, ${row.state || 'N/A'}</td>
+        <td class="px-4 py-3 text-right text-gray-700">${row.targetAudience.toLocaleString()}</td>
+        <td class="px-4 py-3 text-right text-gray-600">${row.totalPopulation.toLocaleString()}</td>
+        <td class="px-4 py-3 text-right font-semibold text-green-600">${concentration}%</td>
+        <td class="px-4 py-3 text-right font-semibold text-blue-600">${this.formatCurrency(row.marketPotential)}</td>
       `;
-      
-      // Add click effect
-      tableRow.addEventListener('mouseenter', () => {
-        tableRow.style.transform = 'translateX(2px)';
-        tableRow.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-      });
-      
-      tableRow.addEventListener('mouseleave', () => {
-        tableRow.style.transform = 'translateX(0)';
-        tableRow.style.boxShadow = 'none';
-      });
       
       tableBody.appendChild(tableRow);
     });
   }
+
+
 
   formatCurrency(amount) {
     if (amount >= 1000000000) {
@@ -818,30 +822,50 @@ class USMarketMap {
   }
 
   showTableLoading() {
-    document.getElementById('table-loading').style.display = 'flex';
-    document.getElementById('table-placeholder').style.display = 'none';
-    document.getElementById('table-content').style.display = 'none';
+    const loadingEl = document.getElementById('table-loading');
+    const placeholderEl = document.getElementById('table-placeholder');
+    const contentEl = document.getElementById('table-content');
+    
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (placeholderEl) placeholderEl.style.display = 'none';
+    if (contentEl) contentEl.style.display = 'none';
   }
 
   hideTableLoading() {
-    document.getElementById('table-loading').style.display = 'none';
+    const loadingEl = document.getElementById('table-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
   }
 
   showTableData() {
-    document.getElementById('table-placeholder').style.display = 'none';
-    document.getElementById('table-content').style.display = 'block';
-    document.getElementById('export-results-btn').style.display = 'block';
+    const placeholderEl = document.getElementById('table-placeholder');
+    const contentEl = document.getElementById('table-content');
+    const exportBtn = document.getElementById('export-results-btn');
+    const paginationControls = document.getElementById('pagination-controls');
+    
+    if (placeholderEl) placeholderEl.style.display = 'none';
+    if (contentEl) contentEl.style.display = 'block';
+    if (exportBtn) exportBtn.style.display = 'block';
+    if (paginationControls) paginationControls.style.display = 'flex';
   }
 
   showTablePlaceholder() {
-    document.getElementById('table-placeholder').style.display = 'flex';
-    document.getElementById('table-content').style.display = 'none';
+    const placeholderEl = document.getElementById('table-placeholder');
+    const contentEl = document.getElementById('table-content');
+    
+    if (placeholderEl) placeholderEl.style.display = 'flex';
+    if (contentEl) contentEl.style.display = 'none';
   }
 
   hideTableData() {
-    document.getElementById('table-placeholder').style.display = 'flex';
-    document.getElementById('table-content').style.display = 'none';
-    document.getElementById('export-results-btn').style.display = 'none';
+    const placeholderEl = document.getElementById('table-placeholder');
+    const contentEl = document.getElementById('table-content');
+    const exportBtn = document.getElementById('export-results-btn');
+    const paginationControls = document.getElementById('pagination-controls');
+    
+    if (placeholderEl) placeholderEl.style.display = 'flex';
+    if (contentEl) contentEl.style.display = 'none';
+    if (exportBtn) exportBtn.style.display = 'none';
+    if (paginationControls) paginationControls.style.display = 'none';
   }
 
   exportTableData() {
@@ -896,7 +920,492 @@ class USMarketMap {
     this.showExportSuccess();
   }
 
-  showExportSuccess() {
+  async exportToPDF() {
+    if (!this.tableData || this.tableData.length === 0) {
+      alert('No data to export. Please generate insights first.');
+      return;
+    }
+
+    try {
+      // Show loading state
+      const exportBtn = document.getElementById('export-results-btn');
+      const originalText = exportBtn.innerHTML;
+      exportBtn.innerHTML = '<svg class="w-3.5 h-3.5 inline mr-1.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>Generating PDF...';
+      exportBtn.disabled = true;
+
+      // Initialize PDF
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // Get current filters for filename
+      const filters = {};
+      document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
+        filters[dropdown.dataset.filter] = dropdown.value;
+      });
+
+      // Page 1: Cover page with branding and executive summary
+      await this.addCoverPageToPDF(pdf);
+      
+      // Page 2: Map view with enhanced capture
+      await this.addMapToPDF(pdf);
+      
+      // Page 3+: Table data with improved formatting
+      await this.addTableToPDF(pdf);
+
+      // Final page: Next steps and call to action
+      await this.addNextStepsToPDF(pdf);
+
+      // Generate filename
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+      const filterString = Object.entries(filters)
+        .filter(([key, value]) => value !== 'all' && value !== 'both')
+        .map(([key, value]) => `${key}-${value}`)
+        .join('_');
+      
+      const filename = `Realyn_Market_Analysis_${filterString || 'all_filters'}_${timestamp}.pdf`;
+      
+      // Download PDF
+      pdf.save(filename);
+
+      // Show success message
+      this.showExportSuccess('PDF');
+
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    } finally {
+      // Restore button state
+      const exportBtn = document.getElementById('export-results-btn');
+      exportBtn.innerHTML = originalText;
+      exportBtn.disabled = false;
+    }
+  }
+
+  async addCoverPageToPDF(pdf) {
+    // Add Realyn branding header
+    pdf.setFillColor(16, 185, 129); // Brand green
+    pdf.rect(0, 0, 210, 40, 'F');
+    
+    // Add logo placeholder (text-based for now)
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Realyn.ai', 20, 25);
+    
+    // Add tagline
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('The Growth GPS Every Brand Needs', 20, 32);
+    
+    // Reset text color
+    pdf.setTextColor(0, 0, 0);
+    
+    // Add main title
+    pdf.setFontSize(28);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Market Analysis Report', 20, 60);
+    
+    // Add subtitle
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Customer Concentration & Market Potential Analysis', 20, 75);
+    
+    // Add date and filters
+    const date = new Date().toLocaleDateString();
+    pdf.setFontSize(12);
+    pdf.text(`Generated on: ${date}`, 20, 90);
+    
+    // Add filter summary
+    const filters = this.getCurrentFilters();
+    pdf.text('Target Market Profile:', 20, 105);
+    pdf.text(filters, 20, 115);
+    
+    // Add executive summary
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Executive Summary', 20, 135);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    
+    const totalPopulation = this.tableData.reduce((sum, row) => sum + row.totalPopulation, 0);
+    const totalTargetAudience = this.tableData.reduce((sum, row) => sum + row.targetAudience, 0);
+    const totalMarketPotential = this.tableData.reduce((sum, row) => sum + row.marketPotential, 0);
+    const concentration = totalPopulation > 0 ? ((totalTargetAudience / totalPopulation) * 100).toFixed(1) : 0;
+    
+    const summaryText = [
+      `• Analyzed ${this.tableData.length} ZIP codes across the United States`,
+      `• Identified ${totalTargetAudience.toLocaleString()} target customers (${concentration}% concentration)`,
+      `• Total market potential: $${this.formatCurrency(totalMarketPotential)}`,
+      `• Top performing markets show significant growth opportunities`,
+      `• Data-driven insights enable precise marketing allocation`
+    ];
+    
+    summaryText.forEach((line, index) => {
+      pdf.text(line, 20, 150 + (index * 6));
+    });
+    
+    // Add page break
+    pdf.addPage();
+  }
+
+  async addMapToPDF(pdf) {
+    // Add page title
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Customer Concentration Map', 20, 30);
+    
+    // Add subtitle
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Top 1000 ZIP codes by target audience concentration', 20, 40);
+    
+    // Try to capture the map with proper positioning
+    const mapContainer = document.getElementById('map-container');
+    if (mapContainer && this.map && this.zipCodeData && this.zipCodeData.length > 0) {
+      try {
+        // Store current map state
+        const currentCenter = this.map.getCenter();
+        const currentZoom = this.map.getZoom();
+        
+        // Set map to show all US with proper zoom for PDF
+        this.map.setCenter([-98.5795, 39.8283]); // Center of US
+        this.map.setZoom(4); // Good zoom level to show all US
+        
+        // Wait for map to adjust
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Force map to repaint and ensure markers are visible
+        this.map.resize();
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Try to use the map's canvas directly
+        const mapCanvas = this.map.getCanvas();
+        if (mapCanvas) {
+          const imgData = mapCanvas.toDataURL('image/png');
+          const imgWidth = 170; // A4 width minus margins
+          const imgHeight = (mapCanvas.height * imgWidth) / mapCanvas.width;
+          
+          // Add map image
+          pdf.addImage(imgData, 'PNG', 20, 50, imgWidth, imgHeight);
+          
+          // Add map legend
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Map Legend:', 20, 50 + imgHeight + 10);
+          
+          pdf.setFont('helvetica', 'normal');
+          pdf.text('• Red markers represent ZIP codes with highest target audience concentration', 20, 50 + imgHeight + 18);
+          pdf.text('• Marker density indicates market opportunity density', 20, 50 + imgHeight + 26);
+          pdf.text('• Interactive map available at realyn.ai for detailed exploration', 20, 50 + imgHeight + 34);
+          
+          // Restore original map state
+          this.map.setCenter(currentCenter);
+          this.map.setZoom(currentZoom);
+          
+          pdf.addPage();
+          return;
+        }
+        
+        // Alternative: Try html2canvas if map canvas doesn't work
+        const canvas = await html2canvas(mapContainer, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          width: mapContainer.offsetWidth,
+          height: mapContainer.offsetHeight,
+          scrollX: 0,
+          scrollY: 0
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 170; // A4 width minus margins
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        // Add map image
+        pdf.addImage(imgData, 'PNG', 20, 50, imgWidth, imgHeight);
+        
+        // Add map legend
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Map Legend:', 20, 50 + imgHeight + 10);
+        
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('• Red markers represent ZIP codes with highest target audience concentration', 20, 50 + imgHeight + 18);
+        pdf.text('• Marker density indicates market opportunity density', 20, 50 + imgHeight + 26);
+        pdf.text('• Interactive map available at realyn.ai for detailed exploration', 20, 50 + imgHeight + 34);
+        
+        // Restore original map state
+        this.map.setCenter(currentCenter);
+        this.map.setZoom(currentZoom);
+        
+        pdf.addPage();
+        return;
+      } catch (error) {
+        console.error('Error capturing map canvas:', error);
+        // Restore original map state on error
+        try {
+          this.map.setCenter(currentCenter);
+          this.map.setZoom(currentZoom);
+        } catch (restoreError) {
+          console.error('Error restoring map state:', restoreError);
+        }
+      }
+      
+      // Fallback: Create a text-based map representation
+      this.addTextBasedMapToPDF(pdf);
+    } else {
+      // Fallback when map is not available
+      this.addTextBasedMapToPDF(pdf);
+    }
+  }
+
+  addTextBasedMapToPDF(pdf) {
+    // Create a text-based representation of the map data
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Market Concentration Analysis', 20, 60);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Geographic Distribution of Target Markets:', 20, 75);
+    
+    if (this.zipCodeData && this.zipCodeData.length > 0) {
+      // Group ZIP codes by state for better organization
+      const stateGroups = {};
+      this.zipCodeData.slice(0, 50).forEach(zip => { // Show top 50 for readability
+        if (!stateGroups[zip.state]) {
+          stateGroups[zip.state] = [];
+        }
+        stateGroups[zip.state].push(zip);
+      });
+      
+      let yPosition = 90;
+      Object.keys(stateGroups).sort().forEach(state => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+        
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${state}:`, 20, yPosition);
+        yPosition += 8;
+        
+        pdf.setFont('helvetica', 'normal');
+        stateGroups[state].slice(0, 5).forEach(zip => { // Show top 5 per state
+          const concentration = zip.totalPopulation > 0 ? 
+            ((zip.population / zip.totalPopulation) * 100).toFixed(1) : 0;
+          pdf.text(`  • ${zip.zipCode} (${zip.city || 'N/A'}): ${zip.population.toLocaleString()} target customers (${concentration}% concentration)`, 25, yPosition);
+          yPosition += 6;
+        });
+        yPosition += 4;
+      });
+    } else {
+      pdf.text('No ZIP code data available for visualization', 20, 90);
+    }
+    
+    // Add summary statistics
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Key Insights:', 20, yPosition + 10);
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('• Red markers on the interactive map represent high-concentration ZIP codes', 20, yPosition + 20);
+    pdf.text('• Geographic clustering indicates regional market opportunities', 20, yPosition + 28);
+    pdf.text('• Interactive map available at realyn.ai for detailed exploration', 20, yPosition + 36);
+    
+    pdf.addPage();
+  }
+
+  async addTableToPDF(pdf) {
+    // Add table title
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Detailed ZIP Code Analysis', 20, 30);
+    
+    // Add summary statistics box
+    pdf.setFillColor(240, 248, 255); // Light blue background
+    pdf.rect(20, 40, 170, 25, 'F');
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Key Statistics:', 25, 48);
+    
+    const totalPopulation = this.tableData.reduce((sum, row) => sum + row.totalPopulation, 0);
+    const totalTargetAudience = this.tableData.reduce((sum, row) => sum + row.targetAudience, 0);
+    const totalMarketPotential = this.tableData.reduce((sum, row) => sum + row.marketPotential, 0);
+    const concentration = totalPopulation > 0 ? ((totalTargetAudience / totalPopulation) * 100).toFixed(1) : 0;
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`• Total ZIP Codes Analyzed: ${this.tableData.length}`, 25, 55);
+    pdf.text(`• Total Population: ${totalPopulation.toLocaleString()}`, 25, 60);
+    pdf.text(`• Target Audience: ${totalTargetAudience.toLocaleString()} (${concentration}% concentration)`, 25, 65);
+    
+    // Table headers with better formatting
+    const headers = ['Rank', 'ZIP Code', 'City, State', 'Target Pop', 'Total Pop', 'Concentration %', 'Market Potential'];
+    const colWidths = [12, 18, 32, 22, 22, 20, 28];
+    const startY = 75;
+    let currentY = startY;
+    
+    // Add table headers with background
+    pdf.setFillColor(59, 130, 246); // Brand blue
+    pdf.rect(20, currentY - 5, 170, 8, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    let x = 20;
+    headers.forEach((header, index) => {
+      pdf.text(header, x + 2, currentY);
+      x += colWidths[index];
+    });
+    
+    // Reset text color
+    pdf.setTextColor(0, 0, 0);
+    currentY += 8;
+    
+    // Add table rows with alternating colors
+    pdf.setFont('helvetica', 'normal');
+    this.tableData.forEach((row, index) => {
+      // Check if we need a new page
+      if (currentY > 270) {
+        pdf.addPage();
+        currentY = 20;
+        
+        // Re-add headers on new page
+        pdf.setFillColor(59, 130, 246);
+        pdf.rect(20, currentY - 5, 170, 8, 'F');
+        
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont('helvetica', 'bold');
+        x = 20;
+        headers.forEach((header, headerIndex) => {
+          pdf.text(header, x + 2, currentY);
+          x += colWidths[headerIndex];
+        });
+        currentY += 8;
+        pdf.setTextColor(0, 0, 0);
+        pdf.setFont('helvetica', 'normal');
+      }
+      
+      // Alternate row colors
+      if (index % 2 === 0) {
+        pdf.setFillColor(248, 250, 252); // Very light gray
+        pdf.rect(20, currentY - 3, 170, 6, 'F');
+      }
+      
+      const concentration = row.totalPopulation > 0 ? 
+        ((row.targetAudience / row.totalPopulation) * 100).toFixed(1) : 0;
+      
+      const rowData = [
+        (index + 1).toString(),
+        row.zipCode,
+        `${row.city || 'N/A'}, ${row.state || 'N/A'}`,
+        row.targetAudience.toLocaleString(),
+        row.totalPopulation.toLocaleString(),
+        `${concentration}%`,
+        `$${this.formatCurrency(row.marketPotential)}`
+      ];
+      
+      x = 20;
+      rowData.forEach((cell, cellIndex) => {
+        // Truncate long text
+        let cellText = cell;
+        if (cellIndex === 2 && cell.length > 20) { // City, State column
+          cellText = cell.substring(0, 17) + '...';
+        }
+        pdf.text(cellText, x + 2, currentY);
+        x += colWidths[cellIndex];
+      });
+      
+      currentY += 6;
+    });
+  }
+
+  async addNextStepsToPDF(pdf) {
+    // Add page title
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Next Steps & Recommendations', 20, 30);
+    
+    // Add main call to action
+    pdf.setFillColor(16, 185, 129); // Brand green
+    pdf.rect(20, 45, 170, 25, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Ready to See How You\'re Winning in Each Market?', 25, 58);
+    
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Book a demo to connect your ads, pricing, and competition data', 25, 65);
+    
+    // Reset text color
+    pdf.setTextColor(0, 0, 0);
+    
+    // Add value proposition
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('What You\'ll Get:', 20, 85);
+    
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    
+    const valueProps = [
+      '• Connect your ads, pricing, and competition data at the lowest granularity',
+      '• Power instant performance analysis and accurate bottom-up forecasting',
+      '• Stop gambling your growth on guesswork',
+      '• Realyn.ai is the growth GPS every brand needs',
+      '• See exactly what drove that 42% growth in Austin while Atlanta underperformed',
+      '• Know what to do next with data-driven precision'
+    ];
+    
+    valueProps.forEach((prop, index) => {
+      pdf.text(prop, 20, 100 + (index * 6));
+    });
+    
+    // Add contact information
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Get Started Today:', 20, 150);
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('📅 Book a Demo: calendly.com/vivek-reddy-goli/15mins-intro-with-vivek', 20, 160);
+    pdf.text('🌐 Visit: realyn.ai', 20, 170);
+    pdf.text('📧 Contact: vivek@realyn.ai', 20, 180);
+    
+    // Add footer branding
+    pdf.setFillColor(16, 185, 129);
+    pdf.rect(0, 280, 210, 15, 'F');
+    
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Realyn.ai - The Growth GPS Every Brand Needs', 20, 288);
+    pdf.text('Generated on ' + new Date().toLocaleDateString(), 150, 288);
+  }
+
+  getCurrentFilters() {
+    const filters = {};
+    document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
+      filters[dropdown.dataset.filter] = dropdown.value;
+    });
+    
+    const yearlyConsumption = document.getElementById('yearly-consumption')?.value || '100';
+    
+    const genderText = filters.gender === 'both' ? 'All genders' : filters.gender;
+    const ethnicityText = filters.ethnicity === 'all' ? 'all ethnicities' : filters.ethnicity;
+    const ageText = filters.age === 'all' ? 'all ages' : filters.age;
+    const incomeText = filters.income === 'all' ? 'all income levels' : filters.income.replace(/([A-Z])/g, ' $1').toLowerCase();
+    
+    return `${genderText}, ${ethnicityText}, ${ageText}, ${incomeText} • $${yearlyConsumption} per capita`;
+  }
+
+  showExportSuccess(type = 'CSV') {
     // Create a temporary success message
     const successMsg = document.createElement('div');
     successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
@@ -904,7 +1413,7 @@ class USMarketMap {
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
       </svg>
-      Export successful! CSV file downloaded.
+      Export successful! ${type} file downloaded.
     `;
     
     document.body.appendChild(successMsg);
@@ -915,6 +1424,8 @@ class USMarketMap {
     }, 3000);
   }
 
+
+
   // Removed all notification methods:
   // - showSuccess()
   // - showError() 
@@ -924,5 +1435,15 @@ class USMarketMap {
 
 // Initialize the map when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  new USMarketMap();
+  window.usMarketMap = new USMarketMap();
+  
+  // Set default view to map
+  if (typeof showSlide === 'function') {
+    showSlide('map');
+  }
+  
+  // Initialize table state - show placeholder by default
+  if (window.usMarketMap) {
+    window.usMarketMap.showTablePlaceholder();
+  }
 });

@@ -14,6 +14,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="{{ url_for('static', filename='map-component.js') }}"></script>
   
   <script>
     tailwind.config = {
@@ -219,6 +224,71 @@
       @apply transform scale-105;
     }
 
+    /* Compact Metrics Styles */
+    .compact-metric {
+      @apply flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/30 transition-all duration-200;
+    }
+
+    .compact-metric:hover {
+      @apply bg-white/30 transform scale-105;
+    }
+
+    .compact-metric .metric-value {
+      @apply text-sm font-bold;
+    }
+
+    .compact-metric .metric-label {
+      @apply text-xs text-white/70;
+    }
+
+    /* Responsive metrics layout */
+    @media (max-width: 1024px) {
+      .compact-metric {
+        @apply px-2 py-1.5;
+      }
+      
+      .compact-metric .metric-value {
+        @apply text-xs;
+      }
+      
+      .compact-metric .metric-label {
+        @apply text-xs;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .compact-metric {
+        @apply px-1.5 py-1;
+        min-width: 60px;
+      }
+      
+      .compact-metric .metric-value {
+        @apply text-xs;
+      }
+      
+      .compact-metric .metric-label {
+        @apply text-xs;
+      }
+    }
+
+    /* Enhanced view toggle styles */
+    .view-toggle-btn {
+      @apply text-white/80 hover:text-white hover:bg-white/20 transition-all duration-200;
+    }
+
+    .view-toggle-btn.active {
+      @apply bg-white/30 text-white shadow-sm;
+    }
+
+    .view-toggle-btn:hover {
+      @apply transform scale-105;
+    }
+
+    /* Compact button styles */
+    .compact-btn {
+      @apply px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105;
+    }
+
     /* Custom scrollbar styles */
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
@@ -256,6 +326,39 @@
     .table-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
+
+    /* Fixed table height for consistent panel size */
+    #table-content {
+      height: 400px; /* Fixed height to accommodate exactly 10 rows */
+    }
+
+    #table-content table {
+      height: 100%;
+    }
+
+    #table-content tbody {
+      height: calc(100% - 40px); /* Subtract header height */
+    }
+
+    /* Ensure table text is dark and visible */
+    #table-content table,
+    #table-content table th,
+    #table-content table td {
+      color: #1f2937 !important; /* Force dark gray text */
+    }
+
+    #table-content table th {
+      color: #374151 !important; /* Slightly darker for headers */
+    }
+
+    /* Ensure pagination controls are also dark */
+    #pagination-controls {
+      color: #1f2937 !important;
+    }
+
+    #pagination-controls button {
+      color: #1f2937 !important;
+    }
   </style>
 </head>
 
@@ -282,7 +385,7 @@
   <!-- Hero Section -->
   <section class="relative bg-gradient-to-br from-brand-green to-brand-blue text-white min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-12">
     <div class="max-w-7xl mx-auto w-full">
-      <div class="text-center mb-8 mt-20">
+      <div class="text-center mb-8 mt-16">
         <h1 id="hero-heading" class="text-3xl sm:text-4xl md:text-5xl max-w-6xl mx-auto font-bold leading-tight mb-4 text-yellow-300">
           Stop Betting on Guesswork<br> Navigate Growth with GPS Precision</h1>
         <p class="text-base sm:text-lg max-w-4xl mx-auto text-white/95 leading-relaxed mb-4">
@@ -381,231 +484,149 @@
           <!-- Generate Insights Button - Fixed at bottom -->
           <div class="mt-6 pt-4 border-t border-white/20">
             <button id="generate-insights" class="w-full bg-gradient-to-r from-yellow-300 to-yellow-400 text-brand-darkgray py-3 px-4 rounded-xl font-semibold text-sm hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:from-yellow-200 hover:to-yellow-300">
-              Refresh Data
+              See Market Map
             </button>
           </div>
         </div>
         
         <!-- Right Panel: US Map and Table View (4/5 = 80% on desktop, full width on mobile) -->
-        <div class="lg:col-span-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 lg:p-8 border border-white/20 shadow-xl flex flex-col min-h-[500px] lg:min-h-[600px]">
+        <div class="lg:col-span-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-white/20 shadow-xl flex flex-col min-h-[500px] lg:min-h-[600px]">
           
-          <!-- View Toggle Section -->
-          <div class="mb-6 flex justify-center">
-            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-1 border border-white/30">
-              <button id="map-view-btn" class="view-toggle-btn active px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-13 7l9-4.5m9 4.5l-9 4.5"></path>
-                </svg>
-                Map View
-              </button>
-              <button id="table-view-btn" class="view-toggle-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0V4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path>
-                </svg>
-                Table View
-              </button>
+          <!-- Results Header with Inline Metrics -->
+          <div id="results-header" class="mb-4 flex-shrink-0" style="display: none;">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-xl font-bold text-white">Market Analysis Results</h2>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-white/80">Population:</span>
+                  <span class="text-lg font-bold text-yellow-300" id="total-population">0</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-white/80">Market Size:</span>
+                  <span class="text-lg font-bold text-green-300" id="market-size">$0</span>
+                </div>
+              </div>
+            </div>
+            <!-- Interesting Fact Line -->
+            <div class="mt-2">
+              <p class="text-sm text-white/90">
+                <span class="font-semibold text-blue-300">Interesting Fact:</span> 
+                <span id="top50-zip-count">0</span> zips cover 50% of this population.
+              </p>
             </div>
           </div>
           
-          <!-- Summary Metrics Section -->
-          <div id="summary-metrics" class="mb-6 p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30" style="display: none;">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              <!-- Market Size -->
-              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="market-size">$0</div>
-                <div class="text-xs text-brand-gray font-medium">Total Market Size</div>
-                <div class="text-xs text-brand-gray/70 mt-1">Addressable market value</div>
-              </div>
-              
-              <!-- Total Population -->
-              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="total-population">0M</div>
-                <div class="text-xs text-brand-gray font-medium">Total Population</div>
-                <div class="text-xs text-brand-gray/70 mt-1">People matching your criteria</div>
-              </div>
-              
-              <!-- Top Zip Codes for 50% -->
-              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="top-zips-50">0</div>
-                <div class="text-xs text-brand-gray font-medium">50% Concentration</div>
-                <div class="text-xs text-brand-gray/70 mt-1">Zip codes with 50% of population</div>
-              </div>
-              
-              <!-- Top Zip Codes for 80% -->
-              <div class="bg-white rounded-lg p-3 text-center shadow-sm">
-                <div class="text-2xl font-bold text-brand-darkgray mb-1" id="top-zips-80">0</div>
-                <div class="text-xs text-brand-gray font-medium">80% Concentration</div>
-                <div class="text-xs text-brand-gray/70 mt-1">Zip codes with 80% of population</div>
-              </div>
-            </div>
+          <!-- Tab Navigation -->
+          <div class="flex border-b border-white/20 mb-3 flex-shrink-0" id="tab-navigation" style="display: none;">
+            <button id="map-tab" onclick="showSlide('map')" 
+                    class="flex-1 py-2 px-4 text-sm font-medium text-white border-b-2 border-yellow-300 transition-colors">
+              📍 ZIP Code Map
+            </button>
+            <button id="table-tab" onclick="showSlide('table')" 
+                    class="flex-1 py-2 px-4 text-sm font-medium text-white/60 border-b-2 border-transparent hover:text-white transition-colors">
+              📊 Data Table
+            </button>
           </div>
           
-          <!-- Map View Container -->
-          <div id="map-container" class="w-full h-full rounded-xl overflow-hidden relative flex-1">
-            <div id="map" class="w-full h-full"></div>
-            <div id="map-loading" class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center" style="display: none;">
-              <div class="text-center bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/30 max-w-md mx-4">
-                <h3 class="text-lg font-semibold text-brand-darkgray mb-2">Loading Market Data</h3>
-                <p class="text-brand-gray text-sm font-medium">Initializing map...</p>
+          <!-- Export Button - Positioned to avoid overlap -->
+          <button id="export-results-btn" class="absolute right-4 top-16 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 z-10" style="display: none;">
+            <svg class="w-3.5 h-3.5 inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Export PDF
+          </button>
+          
+          <!-- Slide Content Container -->
+          <div class="flex-1 overflow-hidden min-h-0">
+            <!-- Map Slide -->
+            <div id="map-slide" class="h-full flex flex-col overflow-hidden">
+              <!-- Map View Container -->
+              <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 flex-1 flex flex-col overflow-hidden">
+                <!-- Map Title -->
+                <div class="mb-2 text-center flex-shrink-0">
+                  <h4 class="font-semibold text-white text-sm">Market Potential ZIP Code Map</h4>
+                  <p class="text-xs text-white/70">Top 1000 ZIP codes shown as interactive pins</p>
+                </div>
+                
+                <!-- Map Container -->
+                <div id="map-container" class="flex-1 min-h-0 overflow-hidden">
+                  <div id="map" class="w-full h-full"></div>
+                  <div id="map-loading" class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center" style="display: none;">
+                    <div class="text-center bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/30 max-w-md mx-4">
+                      <h3 class="text-lg font-semibold text-brand-darkgray mb-2">Loading Market Data</h3>
+                      <p class="text-brand-gray text-sm font-medium">Initializing map...</p>
+                    </div>
+                  </div>
+                </div>
+                
+
               </div>
             </div>
 
-          </div>
-          
-          <!-- Table View Container -->
-          <div id="table-container" class="w-full h-full rounded-xl overflow-hidden relative flex-1" style="display: none;">
-            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 h-full flex flex-col">
-              <!-- Table Header -->
-              <div class="mb-4 flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-white text-elegant-bold">Top 1000 Zip Codes</h3>
-                <div class="flex items-center gap-4">
-                  <div class="text-sm text-white/80">
-                    <span id="table-displayed-count">0</span> of <span id="table-total-zips">0</span> zip codes • 
-                    <span id="table-total-market">$0</span> total market potential
+            <!-- Table Slide -->
+            <div id="table-slide" class="h-full flex flex-col overflow-hidden hidden">
+              <!-- Table View Container -->
+              <div class="w-full h-full rounded-xl overflow-hidden relative flex-1">
+                <!-- ZIP Codes Table -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex-1 flex flex-col">
+                  <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+                    <h4 class="font-semibold text-gray-700">Top 1000 ZIP Codes by Target Audience Concentration</h4>
                   </div>
-                  <button id="export-results-btn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" style="display: none;">
-                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Export Results
-                  </button>
-                </div>
-              </div>
-              
-              <!-- Table Loading -->
-              <div id="table-loading" class="flex-1 flex items-center justify-center">
-                <div class="text-center">
-                  <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
-                    <svg class="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                  </div>
-                  <p class="text-white text-base font-semibold drop-shadow-md">Loading zip code data...</p>
-                </div>
-              </div>
-              
-              <!-- Table Placeholder -->
-              <div id="table-placeholder" class="flex-1 flex items-center justify-center">
-                <div class="text-center">
-                  <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg animate-pulse">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0V4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path>
-                    </svg>
-                  </div>
-                  <h3 class="text-2xl font-bold mb-3 text-white text-elegant-bold drop-shadow-lg">Zip Code Data Table</h3>
-                  <p class="text-white text-elegant mb-4 max-w-md mx-auto text-base font-medium drop-shadow-md">
-                    Select your demographic filters and click "Refresh Data" to see the top 1000 zip codes with detailed market insights
-                  </p>
-                  <div class="bg-gradient-to-r from-white/30 to-white/20 backdrop-blur-sm rounded-xl p-6 w-full max-w-2xl mx-auto border border-white/30 shadow-lg">
-                    <p class="text-sm text-white font-medium text-elegant leading-relaxed drop-shadow-sm">
-                      The table will show ZIP Code, City, State, Total Population, Target Audience, Audience Concentration, and Market Potential for each location.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Table Content -->
-              <div id="table-content" class="flex-1 overflow-hidden" style="display: none;">
-                <div class="bg-white rounded-lg shadow-sm h-full flex flex-col">
-                  <!-- Table Header - Fixed -->
-                  <div class="bg-gradient-to-r from-gray-800 to-gray-700 px-4 py-3 border-b-2 border-gray-600 flex-shrink-0 shadow-sm">
-                    <div class="grid grid-cols-7 gap-3 text-sm font-bold text-white uppercase tracking-wider">
-                      <div class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        ZIP Code
-                      </div>
-                      <div class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                        City
-                      </div>
-                      <div class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
-                        </svg>
-                        State
-                      </div>
-                      <div class="text-right flex items-center justify-end">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        Total Pop
-                      </div>
-                      <div class="text-right flex items-center justify-end">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        Target Audience
-                      </div>
-                      <div class="text-right flex items-center justify-end">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        Concentration
-                      </div>
-                      <div class="text-right flex items-center justify-end">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                        </svg>
-                        Market Potential
-                      </div>
+                  
+                  <!-- Table Loading State -->
+                  <div id="table-loading" class="flex-1 flex items-center justify-center" style="display: none;">
+                    <div class="text-center">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mx-auto mb-4"></div>
+                      <p class="text-gray-600 text-sm">Loading table data...</p>
                     </div>
                   </div>
                   
-                  <!-- Table Body - Fixed Height for Pagination -->
-                  <div id="table-body" class="flex-1 overflow-y-auto table-scrollbar" style="max-height: 400px;">
-                    <!-- Table rows will be populated here -->
+                  <!-- Table Placeholder -->
+                  <div id="table-placeholder" class="flex-1 flex items-center justify-center">
+                    <div class="text-center text-gray-500">
+                      <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                      </svg>
+                      <p class="text-sm">Generate insights to see ZIP code data</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Table Content -->
+                  <div id="table-content" class="flex-1 overflow-auto min-h-0" style="display: none;">
+                    <table class="w-full text-sm">
+                      <thead class="bg-gray-50 border-b border-gray-200 sticky top-0">
+                        <tr>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">Rank</th>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">ZIP Code</th>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">City, State</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Target Population</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Total Population</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Concentration %</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Market Potential</th>
+                        </tr>
+                      </thead>
+                      <tbody id="zip-table-body" class="divide-y divide-gray-200">
+                        <!-- ZIP code rows will be populated here -->
+                      </tbody>
+                    </table>
                   </div>
                   
                   <!-- Pagination Controls -->
-                  <div id="pagination-controls" class="bg-gray-50 border-t border-gray-200 px-4 py-3 flex-shrink-0">
-                    <div class="flex items-center justify-between">
-                      <!-- Page Size Selector -->
-                      <div class="flex items-center space-x-2">
-                        <label class="text-sm text-gray-700 font-medium">Rows per page:</label>
-                        <select id="page-size-selector" class="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-blue/30">
-                          <option value="25">25</option>
-                          <option value="50" selected>50</option>
-                          <option value="100">100</option>
-                        </select>
-                      </div>
-                      
-                      <!-- Pagination Info -->
-                      <div id="pagination-info" class="text-sm text-gray-700">
-                        Showing <span id="pagination-start">1</span> to <span id="pagination-end">50</span> of <span id="pagination-total">1000</span> results
-                      </div>
-                      
-                      <!-- Pagination Buttons -->
-                      <div class="flex items-center space-x-1">
-                        <button id="first-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
-                          </svg>
+                  <div id="pagination-controls" class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between flex-shrink-0" style="display: none;">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-sm text-gray-700">Showing 10 rows per page</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span id="pagination-info" class="text-sm text-gray-700">Showing 1-10 of 1000</span>
+                      <div class="flex space-x-1">
+                        <button id="prev-page" class="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                          Previous
                         </button>
-                        <button id="prev-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                          </svg>
-                        </button>
-                        
-                        <!-- Page Numbers -->
-                        <div id="page-numbers" class="flex items-center space-x-1">
-                          <!-- Page numbers will be populated here -->
+                        <div id="page-numbers" class="flex space-x-1">
+                          <!-- Page numbers will be generated here -->
                         </div>
-                        
-                        <button id="next-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                          </svg>
-                        </button>
-                        <button id="last-page-btn" class="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
-                          </svg>
+                        <button id="next-page" class="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                          Next
                         </button>
                       </div>
                     </div>
@@ -613,300 +634,255 @@
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
   </section>
+<!-- Problem Section -->
+<section class="relative bg-white text-brand-navy section-padding overflow-hidden">
+  <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+    <h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+      You Are Making Million-Dollar Decisions on Stale Reports
+    </h2>
+    <p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+      By the time your team pulls data from different sources, wrangle spreadsheets, and build slide decks, the market's already moved. 
+    </p>
 
-  <!-- Problem Section -->
-  <section class="relative bg-white text-brand-navy section-padding overflow-hidden">
-    <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
-      <h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
-        You Are Making Million-Dollar Decisions on Stale Reports
-      </h2>
-      <p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
-        By the time your team pulls data from different sources, wrangle spreadsheets, and build slide decks, the market's already moved. 
-      </p>
-
-      <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Campaign Attribution Crisis</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Did that 20% sales lift come from your new campaign—or just category-wide growth? Which regions should you scale to next?
-              </p>
-            </div>
+    <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
           </div>
-        </div>
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Channel Cannibalization</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Are your DTC promotions stealing customers from retail partners, or actually growing the pie?
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Competitive Blindness</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                A competitor just slashed prices 15%. Where will you lose share, and where can you still hold margin?
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Stockout Roulette</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Which SKUs are about to go OOS—and in which markets? Your forecasts are failing you when you need them most.
-              </p>
-            </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Campaign Attribution Crisis</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Did that 20% sales lift come from your new campaign—or just category-wide growth? Which regions should you scale to next?
+            </p>
           </div>
         </div>
       </div>
-
-      <div class="mt-10 p-5 bg-gradient-to-r from-brand-green/10 to-brand-blue/10 rounded-xl border border-brand-green/20">
-        <p class="text-base leading-relaxed max-w-3xl mx-auto text-brand-navy font-medium text-elegant">
-          The reality? Each deep-dive takes 2–3 weeks, costing millions in lost growth, even when you have all the data to get answers and clarity instantly.
-        </p>
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Channel Cannibalization</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Are your DTC promotions stealing customers from retail partners, or actually growing the pie?
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Competitive Blindness</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              A competitor just slashed prices 15%. Where will you lose share, and where can you still hold margin?
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Stockout Roulette</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Which SKUs are about to go OOS—and in which markets? Your forecasts are failing you when you need them most.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  </section>
 
-  <!-- Benefits Section -->
-  <section class="relative bg-gray-100 text-brand-navy section-padding overflow-hidden">
-    <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
-      <h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
-        The Growth GPS Every Brand Needs 
-      </h2>
-      <p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
-        Because its not enough to know just the destination. You need live traffic, directions, and road conditions to navigate efficiently. Realyn maps the impact of your ads, pricing, and competitive moves on demand in real-time so you can navigate your growth efficiently.
+    <div class="mt-10 p-5 bg-gradient-to-r from-brand-green/10 to-brand-blue/10 rounded-xl border border-brand-green/20">
+      <p class="text-base leading-relaxed max-w-3xl mx-auto text-brand-navy font-medium text-elegant">
+        The reality? Each deep-dive takes 2–3 weeks, costing millions in lost growth, even when you have all the data to get answers and clarity instantly.
       </p>
+    </div>
+  </div>
+</section>
 
-      <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Maximize ROI </h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Optimize spend with zip-code precision. Stop wasting budget on underperforming regions and double down on what works.
-              </p>
-            </div>
+<!-- Benefits Section -->
+<section class="relative bg-gray-100 text-brand-navy section-padding overflow-hidden">
+  <div class="max-w-6xl mx-auto text-center animate-fade-in-up">
+    <h2 class="text-2xl md:text-3xl font-bold mb-5 gradient-text text-elegant-bold">
+      The Growth GPS Every Brand Needs 
+    </h2>
+    <p class="text-base mb-8 leading-relaxed max-w-3xl mx-auto text-brand-darkgray text-elegant">
+      Because its not enough to know just the destination. You need live traffic, directions, and road conditions to navigate efficiently. Realyn maps the impact of your ads, pricing, and competitive moves on demand in real-time so you can navigate your growth efficiently.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Maximize ROI </h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Optimize spend with zip-code precision. Stop wasting budget on underperforming regions and double down on what works.
+            </p>
           </div>
         </div>
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Protect Margins</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Give discounts only when necessary. Know exactly when and where to defend against competitive pressure.
-              </p>
-            </div>
+      </div>
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Protect Margins</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Give discounts only when necessary. Know exactly when and where to defend against competitive pressure.
+            </p>
           </div>
         </div>
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-              </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Prevent Stockouts</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Get 2–4 week early warnings on inventory risks. Keep your bestsellers in stock when demand spikes.
-              </p>
-            </div>
+      </div>
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Prevent Stockouts</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Get 2–4 week early warnings on inventory risks. Keep your bestsellers in stock when demand spikes.
+            </p>
           </div>
         </div>
-        <div class="hover-card elegant-card p-5 rounded-xl text-left">
-          <div class="flex items-start gap-4">
-            <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
-              <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+      </div>
+      <div class="hover-card elegant-card p-5 rounded-xl text-left">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 flex items-center justify-center w-10 h-10 bg-gradient-to-br from-brand-green/10 to-brand-blue/10 rounded-lg">
+            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-semibold mb-2 text-brand-navy">Lead the Market</h3>
+            <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
+              Stay several steps ahead of the competition. Anticipate competitor moves and market shifts instead of reacting to them.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  
+
+<!-- Founder Quote -->
+<section id="About" class="section-padding bg-white">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-xl md:text-2xl font-bold mb-6 text-center text-elegant-bold">Built by Amazon Veterans Who've Seen the Waste</h2>
+    <div class="elegant-card p-6 rounded-xl">
+      <div class="flex items-center gap-6">
+        <!-- Left side - Image placeholder -->
+        <div class="w-24 flex-shrink-0">
+          <img src="{{ url_for('static', filename='Assets/amazon-150.png') }}" alt="Amazon Logo" class="w-20 h-20 object-contain">
+        </div>
+        
+        <!-- Right side - Content (80% width) -->
+        <div class="flex-1">
+          <div class="flex items-center justify-center mb-4">
+            <!-- <div class="w-20 h-20 rounded-full overflow-hidden">
+              <img src="{{ url_for('static', filename='Assets/vivek.jpeg') }}" alt="Vivek Reddy Goli" class="w-full h-full object-cover">
+            </div> -->
+          </div>
+          <blockquote class="text-sm text-gray-800 mb-3 italic text-elegant">
+            "At Amazon, I saw a top CPG brand lose millions on a single promotion because their data was two weeks old—they missed a competitor's price drop in their key market. It wasn't a strategy problem; it was a speed problem. I built Realyn to give every brand the live intelligence they need to move at the speed of the market."
+          </blockquote>
+          <div class="flex items-center justify-center gap-3 mb-3">
+            <p class="font-semibold text-gray-700 text-sm">— Vivek Reddy Goli, CEO & Co-founder</p>
+            <a href="https://www.linkedin.com/in/vivekreddygoli/" target="_blank" class="text-brand-navy hover:text-brand-green transition-colors">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
               </svg>
-            </div>
-            <div>
-              <h3 class="text-base font-semibold mb-2 text-brand-navy">Lead the Market</h3>
-              <p class="text-sm leading-relaxed text-brand-darkgray text-elegant">
-                Stay several steps ahead of the competition. Anticipate competitor moves and market shifts instead of reacting to them.
-              </p>
-            </div>
+            </a>
+          </div>
+          <div class="mt-3 text-xs text-gray-600 text-center">
+            <p>Amazon Product & Engineering Leader • 10+ years building enterprise systems</p>
           </div>
         </div>
       </div>
     </div>
   </section>
     
-  <!-- Founder Quote -->
-  <section id="About" class="section-padding bg-white">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-xl md:text-2xl font-bold mb-6 text-center text-elegant-bold">Built by Amazon Veterans Who've Seen the Waste</h2>
-      <div class="elegant-card p-6 rounded-xl">
-        <div class="flex items-center gap-6">
-          <!-- Left side - Image placeholder -->
-          <div class="w-24 flex-shrink-0">
-            <img src="{{ url_for('static', filename='Assets/amazon-150.png') }}" alt="Amazon Logo" class="w-20 h-20 object-contain">
-          </div>
-          
-          <!-- Right side - Content (80% width) -->
-          <div class="flex-1">
-            <div class="flex items-center justify-center mb-4">
-              <!-- <div class="w-20 h-20 rounded-full overflow-hidden">
-                <img src="{{ url_for('static', filename='Assets/vivek.jpeg') }}" alt="Vivek Reddy Goli" class="w-full h-full object-cover">
-              </div> -->
-            </div>
-            <blockquote class="text-sm text-gray-800 mb-3 italic text-elegant">
-              "At Amazon, I saw a top CPG brand lose millions on a single promotion because their data was two weeks old—they missed a competitor's price drop in their key market. It wasn't a strategy problem; it was a speed problem. I built Realyn to give every brand the live intelligence they need to move at the speed of the market."
-            </blockquote>
-            <div class="flex items-center justify-center gap-3 mb-3">
-              <p class="font-semibold text-gray-700 text-sm">— Vivek Reddy Goli, CEO & Co-founder</p>
-              <a href="https://www.linkedin.com/in/vivekreddygoli/" target="_blank" class="text-brand-navy hover:text-brand-green transition-colors">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-            </div>
-            <div class="mt-3 text-xs text-gray-600 text-center">
-              <p>Amazon Product & Engineering Leader • 10+ years building enterprise systems</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-      
-    <!-- CTA -->
-    <section class="section-padding bg-gradient-to-r from-brand-green to-brand-blue text-white">
-      <div class="max-w-5xl mx-auto text-center">
-        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-elegant-bold">Ready to See Realyn in Action?</h2>
-        <p class="text-base mb-6 text-elegant">Take the first step towards transforming your marketing effectiveness today.</p>
-        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="modern-button bg-white text-brand-navy px-8 py-3 rounded-xl font-semibold hover:bg-yellow-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-          Book Your Demo
-        </a>
-      </div>
-      
-      <div class="mt-6 border-t border-white/20 pt-8 text-center">
-        <p class="text-white/70 text-sm text-elegant">
-          © 2024 Realyn.ai. All rights reserved.
-        </p>
-      </div>
-    </section>
-  </body>
-  
+  <!-- CTA -->
+  <section class="section-padding bg-gradient-to-r from-brand-green to-brand-blue text-white">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 text-elegant-bold">Ready to See Realyn in Action?</h2>
+      <p class="text-base mb-6 text-elegant">Take the first step towards transforming your marketing effectiveness today.</p>
+      <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="modern-button bg-white text-brand-navy px-8 py-3 rounded-xl font-semibold hover:bg-yellow-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+        Book Your Demo
+      </a>
+    </div>
+    
+    <div class="mt-6 border-t border-white/20 pt-8 text-center">
+      <p class="text-white/70 text-sm text-elegant">
+        © 2024 Realyn.ai. All rights reserved.
+      </p>
+    </div>
+  </section>
+</body>
+</html>
+
   <script>
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-  
-    // Intersection Observer for animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-  
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-  
-    // Observe all animated elements
-    document.querySelectorAll('.animate-fade-in-up, .animate-fade-in, .animate-slide-up, .animate-scale-in').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      observer.observe(el);
-    });
-  </script>
-  <!-- Lead Magnet JavaScript -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize filter functionality
-      const filterDropdowns = document.querySelectorAll('.filter-dropdown');
-      const generateButton = document.getElementById('generate-insights');
+    // Slide functionality
+    function showSlide(slideId) {
+      // Reset all tab styles
+      document.getElementById('map-tab').classList.remove('border-b-2', 'border-yellow-300', 'text-white');
+      document.getElementById('map-tab').classList.add('text-white/60', 'border-transparent');
+      document.getElementById('table-tab').classList.remove('border-b-2', 'border-yellow-300', 'text-white');
+      document.getElementById('table-tab').classList.add('text-white/60', 'border-transparent');
       
-      // Handle filter dropdown changes
-      filterDropdowns.forEach(dropdown => {
-        dropdown.addEventListener('change', function() {
-          const filterType = this.dataset.filter;
-          const filterValue = this.value;
-          
-          // Log the filter change (for now)
-          console.log(`Filter changed: ${filterType} = ${filterValue}`);
-        });
-      });
-      
-      // Handle generate insights button
-      generateButton.addEventListener('click', function() {
-        // Collect all filter values
-        const activeFilters = {};
-        document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
-          const filterType = dropdown.dataset.filter;
-          const filterValue = dropdown.value;
-          activeFilters[filterType] = filterValue;
-        });
-        
-        console.log('Generating insights with filters:', activeFilters);
-        
-        // Map visualization is handled by the map component
-        // No alert dialog needed
-      });
-    });
+      // Hide all slide content
+      document.getElementById('map-slide').classList.add('hidden');
+      document.getElementById('table-slide').classList.add('hidden');
+
+      // Show selected slide and style its tab
+      if (slideId === 'map') {
+        document.getElementById('map-tab').classList.remove('text-white/60', 'border-transparent');
+        document.getElementById('map-tab').classList.add('border-b-2', 'border-yellow-300', 'text-white');
+        document.getElementById('map-slide').classList.remove('hidden');
+      } else if (slideId === 'table') {
+        document.getElementById('table-tab').classList.remove('text-white/60', 'border-transparent');
+        document.getElementById('table-tab').classList.add('border-b-2', 'border-yellow-300', 'text-white');
+        document.getElementById('table-slide').classList.remove('hidden');
+      }
+    }
+
+    // Export function
+    function exportResults() {
+      if (window.usMarketMap && window.usMarketMap.tableData && window.usMarketMap.tableData.length > 0) {
+        window.usMarketMap.exportToPDF();
+      } else {
+        alert('No data to export. Please generate insights first.');
+      }
+    }
   </script>
-  <!-- MapLibre GL JS -->
-  <script src='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js'></script>
-  <link href='https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css' rel='stylesheet' />
-  
-  <!-- Map Component JavaScript -->
-  <script src="{{ url_for('static', filename='map-component.js') }}?v=3"></script>
-  </html>
