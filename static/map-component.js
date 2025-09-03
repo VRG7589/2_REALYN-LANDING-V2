@@ -704,9 +704,23 @@ class USMarketMap {
         <td class="px-4 py-2 text-xs font-medium text-gray-900">${row.zipCode}</td>
         <td class="px-4 py-2 text-xs text-gray-600">${row.city || 'N/A'}, ${row.state || 'N/A'}</td>
         <td class="px-4 py-2 text-xs text-right text-gray-900">${row.targetAudience.toLocaleString()}</td>
-        <td class="px-4 py-2 text-xs text-right text-gray-600">${row.totalPopulation.toLocaleString()}</td>
         <td class="px-4 py-2 text-xs text-right text-gray-900">${concentration}%</td>
         <td class="px-4 py-2 text-xs text-right font-medium text-green-600">$${row.marketPotential.toLocaleString()}</td>
+        <td class="px-4 py-2 text-xs text-right premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-2 text-xs text-right premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-2 text-xs text-left premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-2 text-xs text-right premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-2 text-xs text-right premium-cell">
+          xxx
+        </td>
       `;
       tbody.appendChild(tr);
     }
@@ -788,9 +802,23 @@ class USMarketMap {
         <td class="px-4 py-3 font-semibold text-gray-900">${row.zipCode}</td>
         <td class="px-4 py-3 text-gray-700">${row.city || 'N/A'}, ${row.state || 'N/A'}</td>
         <td class="px-4 py-3 text-right text-gray-700">${row.targetAudience.toLocaleString()}</td>
-        <td class="px-4 py-3 text-right text-gray-600">${row.totalPopulation.toLocaleString()}</td>
         <td class="px-4 py-3 text-right font-semibold text-green-600">${concentration}%</td>
         <td class="px-4 py-3 text-right font-semibold text-blue-600">${this.formatCurrency(row.marketPotential)}</td>
+        <td class="px-4 py-3 text-right premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-3 text-right premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-3 text-left premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-3 text-right premium-cell">
+          xxx
+        </td>
+        <td class="px-4 py-3 text-right premium-cell">
+          xxx
+        </td>
       `;
       
       tableBody.appendChild(tableRow);
@@ -881,18 +909,27 @@ class USMarketMap {
     });
 
     // Create CSV content - export ALL data, not just current page
-    const headers = ['ZIP Code', 'City', 'State', 'Total Population', 'Target Audience', 'Audience Concentration (%)', 'Market Potential ($)'];
+    const headers = ['ZIP Code', 'City', 'State', 'Target Audience', 'Audience Concentration (%)', 'Market Potential ($)', 'Brand Market Share (%)', 'Competitiveness Index', 'Largest Competitor', 'Avg CPM ($)', 'Opportunity Score'];
     const csvContent = [
       headers.join(','),
-      ...this.tableData.map(row => [
-        row.zipCode,
-        `"${row.city}"`,
-        row.state,
-        row.totalPopulation,
-        row.targetAudience,
-        row.audienceConcentration.toFixed(2),
-        row.marketPotential
-      ].join(','))
+      ...this.tableData.map(row => {
+        const concentration = row.totalPopulation > 0 ? 
+          ((row.targetAudience / row.totalPopulation) * 100).toFixed(2) : 0;
+        
+        return [
+          row.zipCode,
+          `"${row.city}"`,
+          row.state,
+          row.targetAudience,
+          concentration,
+          row.marketPotential,
+          'xxx',
+          'xxx',
+          '"xxx"',
+          'xxx',
+          'xxx'
+        ].join(',');
+      })
     ].join('\n');
 
     // Create and download file
@@ -1245,8 +1282,8 @@ class USMarketMap {
     pdf.text(`• Target Audience: ${totalTargetAudience.toLocaleString()} (${concentration}% concentration)`, 25, 65);
     
     // Table headers with better formatting
-    const headers = ['Rank', 'ZIP Code', 'City, State', 'Target Pop', 'Total Pop', 'Concentration %', 'Market Potential'];
-    const colWidths = [12, 18, 32, 22, 22, 20, 28];
+    const headers = ['Rank', 'ZIP Code', 'City, State', 'Target Pop', 'Concentration %', 'Market Potential', 'Brand Share', 'Comp Index', 'Competitor', 'Avg CPM', 'Opp Score'];
+    const colWidths = [10, 15, 25, 18, 15, 20, 12, 12, 15, 12, 12];
     const startY = 75;
     let currentY = startY;
     
@@ -1305,9 +1342,13 @@ class USMarketMap {
         row.zipCode,
         `${row.city || 'N/A'}, ${row.state || 'N/A'}`,
         row.targetAudience.toLocaleString(),
-        row.totalPopulation.toLocaleString(),
         `${concentration}%`,
-        `$${this.formatCurrency(row.marketPotential)}`
+        `$${this.formatCurrency(row.marketPotential)}`,
+        'xxx',
+        'xxx',
+        'xxx',
+        'xxx',
+        'xxx'
       ];
       
       x = 20;
@@ -1316,6 +1357,8 @@ class USMarketMap {
         let cellText = cell;
         if (cellIndex === 2 && cell.length > 20) { // City, State column
           cellText = cell.substring(0, 17) + '...';
+        } else if (cellIndex === 8 && cell.length > 12) { // Competitor column
+          cellText = cell.substring(0, 9) + '...';
         }
         pdf.text(cellText, x + 2, currentY);
         x += colWidths[cellIndex];

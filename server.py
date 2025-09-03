@@ -217,6 +217,10 @@ def load_zip_coordinates():
 def index():
     return render_template('index.html')
 
+@app.route('/pricing')
+def pricing():
+    return render_template('pricing.html')
+
 @app.route('/api/health')
 def health_check():
     return jsonify({"status": "healthy", "message": "Server is running"})
@@ -824,7 +828,7 @@ def get_zip_codes_for_map():
             "fiftyPercentPopulation": int(fifty_percent_threshold),
             "top50PercentZipCount": len(top_50_percent),
             "top80PercentZipCount": len(top_80_percent),
-            "top1000ZipCount": len(top_1000),  # Changed from top20PercentZipCount
+            "top1000ZipCount": len(top_1000),  # For map display
             "totalMatchingZipCodes": len(sorted_df),  # Total zip codes that match criteria
             "filters": filters
         }
@@ -971,13 +975,13 @@ def get_zip_codes_table():
         if total_target_population == 0:
             return jsonify({"error": "No zip codes match the selected demographic criteria"}), 400
         
-        # Sort by target population (largest to smallest) and take top 1000
+        # Sort by target population (largest to smallest) and take top 100
         sorted_df = zip_codes_with_target_pop.sort_values('target_population', ascending=False)
-        top_1000 = sorted_df.head(1000)
+        top_100 = sorted_df.head(100)
         
         # Prepare table data
         table_data = []
-        for _, row in top_1000.iterrows():
+        for _, row in top_100.iterrows():
             # Calculate audience concentration (target audience / total population of that zip code)
             audience_concentration = (row['target_population'] / row['population']) * 100 if row['population'] > 0 else 0
             

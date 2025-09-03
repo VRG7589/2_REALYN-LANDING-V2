@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Pricing - Realyn.ai: The Growth GPS Every Brand Needs</title>
+  <meta name="description" content="Choose the perfect Realyn.ai plan for your business. From free market insights to enterprise-grade competitive intelligence." />
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='Assets/favicon.ico') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-green': '#10B981',
+            'brand-blue': '#3B82F6',
+            'brand-logoblue': '#1A5CB2',
+            'brand-navy': '#1E3A8A',
+            'brand-orange': '#FF5733',
+            'brand-red': '#FF0000',
+            'brand-yellow': '#FFD700',
+            'brand-light': '#F9FAFB',
+            'brand-darkgray': '#344054',
+            'brand-gray': '#6B7280'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-in-up': 'fade-in-up 0.8s ease-out both',
+            'fade-in': 'fade-in 0.5s ease-out both',
+            'slide-up': 'slide-up 0.5s ease-out both',
+            'scale-in': 'scale-in 0.3s ease-out both',
+          },
+          keyframes: {
+            'fade-in-up': {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            'fade-in': {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            'slide-up': {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            'scale-in': {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .text-elegant {
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    
+    .text-elegant-bold {
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+    
+    .hover-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .elegant-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .modern-button {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modern-button:hover {
+      transform: scale(1.02);
+    }
+    
+    .animate-fade-in-up {
+      animation: fade-in-up 0.8s ease-out both;
+    }
+    
+    .animate-fade-in {
+      animation: fade-in 0.5s ease-out both;
+    }
+    
+    .animate-slide-up {
+      animation: slide-up 0.5s ease-out both;
+    }
+    
+    .animate-scale-in {
+      animation: scale-in 0.3s ease-out both;
+    }
+    
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fade-in {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    
+    @keyframes slide-up {
+      0% { transform: translateY(20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes scale-in {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .section-padding {
+      padding: 4rem 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .section-padding {
+        padding: 2rem 1rem;
+      }
+    }
+
+    /* Pricing table styles */
+    .pricing-table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.875rem;
+    }
+    
+    .pricing-table th,
+    .pricing-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .pricing-table th {
+      background-color: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .pricing-table .feature-category {
+      background-color: #f3f4f6;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .pricing-table .checkmark {
+      color: #10b981;
+      font-weight: bold;
+    }
+    
+    .pricing-table .cross {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    
+    .pricing-card {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .pricing-card:hover {
+      border-color: #10b981;
+      transform: translateY(-2px);
+    }
+    
+    .pricing-card.featured {
+      border-color: #10b981;
+      position: relative;
+    }
+    
+    .pricing-card.featured::before {
+      content: "Most Popular";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
+      color: white;
+      padding: 0.25rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-gray-900 font-sans antialiased">
+
+  <!-- Navigation -->
+  <nav class="fixed w-full z-50 bg-white shadow-sm border-b border-gray-200/50">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300">
+        <img src="{{ url_for('static', filename='Assets/Logo.svg') }}" alt="Logo" class="h-8 w-8 object-contain" />
+        <div class="text-xl font-bold tracking-tight gradient-text">Realyn.ai</div>
+      </a>
+        
+      <div class="hidden md:flex space-x-6 text-sm font-medium">
+        <!--
+        <a href="/#how-it-works" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">How It Works</a>
+        <a href="/#insights" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Insights</a>
+        -->
+        <a href="/pricing" class="nav-link text-brand-green font-semibold transition-all duration-300 rounded-md px-3 py-2 bg-green-50">Pricing</a>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-green/90 transition-all duration-300 text-sm">Book a Demo</a>
+        <a href="https://opsplanner-v1-client.onrender.com" target="_blank" class="border border-brand-green text-brand-green px-4 py-2 rounded-lg hover:bg-brand-green/10 transition-all duration-300 text-sm">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-brand-green to-brand-blue text-white pt-20 pb-12">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4 mt-10 text-yellow-300 animate-fade-in-up">
+        Choose Your Growth GPS
+      </h1>
+      <p class="text-base sm:text-lg max-w-3xl mx-auto text-white/95 leading-relaxed mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+        From free market insights to enterprise-grade competitive intelligence. Find the perfect plan to accelerate your growth.
+      </p>
+    </div>
+  </section>
+
+  <!-- Pricing Cards -->
+  <section class="section-padding bg-gray-50">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        
+        <!-- Free Plan -->
+        <div class="pricing-card elegant-card p-6 rounded-xl">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-brand-navy mb-2">Market Snapshot</h3>
+            <div class="text-3xl font-bold text-brand-green mb-1">Free</div>
+            <p class="text-sm text-brand-gray">Perfect for getting started</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              5 basic demographic filters
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Top 100 ZIP codes
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Monthly data updates
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Basic maps & exports
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              10 analyses per month
+            </li>
+          </ul>
+          
+          <a href="/" class="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-semibold text-center block hover:bg-gray-300 transition-all duration-300">
+            Get Started Free
+          </a>
+        </div>
+
+        <!-- Starter Plan -->
+        <div class="pricing-card elegant-card p-6 rounded-xl">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-brand-navy mb-2">Starter</h3>
+            <div class="text-3xl font-bold text-brand-green mb-1">$297<span class="text-lg text-brand-gray">/mo</span></div>
+            <p class="text-sm text-brand-gray">For growing businesses</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              20+ demographic & behavioral filters
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              All 40K+ ZIP codes
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Weekly data refreshes
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              12 months historical data
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              100 analyses per month
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              3 users included
+            </li>
+          </ul>
+          
+          <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="w-full bg-brand-green text-white py-3 px-4 rounded-lg font-semibold text-center block hover:bg-brand-green/90 transition-all duration-300">
+            Start Free Trial
+          </a>
+        </div>
+
+        <!-- Professional Plan -->
+        <div class="pricing-card featured elegant-card p-6 rounded-xl">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-brand-navy mb-2">Professional</h3>
+            <div class="text-3xl font-bold text-brand-green mb-1">$897<span class="text-lg text-brand-gray">/mo</span></div>
+            <p class="text-sm text-brand-gray">For data-driven teams</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Everything in Starter
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Competitive price tracking (3 competitors)
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Campaign impact attribution
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              24 months historical data
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              API access & custom exports
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              10 users included
+            </li>
+          </ul>
+          
+          <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="w-full bg-brand-green text-white py-3 px-4 rounded-lg font-semibold text-center block hover:bg-brand-green/90 transition-all duration-300">
+            Start Free Trial
+          </a>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="pricing-card elegant-card p-6 rounded-xl">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-brand-navy mb-2">Enterprise</h3>
+            <div class="text-3xl font-bold text-brand-green mb-1">Custom</div>
+            <p class="text-sm text-brand-gray">For large organizations</p>
+          </div>
+          
+          <ul class="space-y-3 mb-6">
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Everything in Professional
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Unlimited competitive tracking
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Real-time data updates
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Demand forecasting
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              White-label options
+            </li>
+            <li class="flex items-center text-sm">
+              <i data-lucide="check" class="w-4 h-4 text-brand-green mr-2"></i>
+              Unlimited users
+            </li>
+          </ul>
+          
+          <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="w-full bg-brand-navy text-white py-3 px-4 rounded-lg font-semibold text-center block hover:bg-brand-navy/90 transition-all duration-300">
+            Contact Sales
+          </a>
+        </div>
+      </div>
+
+      <!-- Annual Discount Notice -->
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-lg text-sm font-medium">
+          <i data-lucide="gift" class="w-4 h-4 mr-2"></i>
+          Save 20% with annual billing on paid plans
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed Feature Comparison -->
+  <section class="section-padding bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 gradient-text text-elegant-bold">
+          Complete Feature Comparison
+        </h2>
+        <p class="text-base text-brand-darkgray text-elegant max-w-3xl mx-auto">
+          Compare all features across our pricing tiers to find the perfect fit for your business needs.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="pricing-table w-full">
+          <thead>
+            <tr>
+              <th class="text-left">Feature</th>
+              <th class="text-center">Market Snapshot<br><span class="text-sm font-normal text-brand-gray">(Free)</span></th>
+              <th class="text-center">Starter<br><span class="text-sm font-normal text-brand-gray">($297/mo)</span></th>
+              <th class="text-center">Professional<br><span class="text-sm font-normal text-brand-gray">($897/mo)</span></th>
+              <th class="text-center">Enterprise<br><span class="text-sm font-normal text-brand-gray">(Custom)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="feature-category">
+              <td colspan="5"><strong>Demographics & Filters</strong></td>
+            </tr>
+            <tr>
+              <td>Demographic Filters</td>
+              <td class="text-center">5 basic filters</td>
+              <td class="text-center">20+ demographic & behavioral</td>
+              <td class="text-center">20+ demographic & behavioral</td>
+              <td class="text-center">20+ demographic & behavioral</td>
+            </tr>
+            <tr>
+              <td>ZIP Code Coverage</td>
+              <td class="text-center">Top 100 ZIP codes</td>
+              <td class="text-center">All 40K+ ZIP codes</td>
+              <td class="text-center">All 40K+ ZIP codes</td>
+              <td class="text-center">All 40K+ ZIP codes</td>
+            </tr>
+            
+            <tr class="feature-category">
+              <td colspan="5"><strong>Data & Updates</strong></td>
+            </tr>
+            <tr>
+              <td>Data Refresh Rate</td>
+              <td class="text-center">Monthly updates</td>
+              <td class="text-center">Weekly refreshes</td>
+              <td class="text-center">Weekly refreshes</td>
+              <td class="text-center">Real-time updates</td>
+            </tr>
+            <tr>
+              <td>Historical Data</td>
+              <td class="text-center">Current month only</td>
+              <td class="text-center">12 months</td>
+              <td class="text-center">24 months</td>
+              <td class="text-center">Unlimited history</td>
+            </tr>
+            
+            <tr class="feature-category">
+              <td colspan="5"><strong>Market Intelligence</strong></td>
+            </tr>
+            <tr>
+              <td>Customer Concentration Map</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+            </tr>
+            <tr>
+              <td>Market Size Calculations</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+            </tr>
+            <tr>
+              <td>Competitive Price Tracking</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center">3 competitors</td>
+              <td class="text-center">Unlimited competitors</td>
+            </tr>
+            <tr>
+              <td>Campaign Impact Attribution</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center checkmark">✓</td>
+              <td class="text-center checkmark">✓</td>
+            </tr>
+            <tr>
+              <td>Demand Forecasting</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center checkmark">✓</td>
+            </tr>
+            
+            <tr class="feature-category">
+              <td colspan="5"><strong>Export & Integration</strong></td>
+            </tr>
+            <tr>
+              <td>Export Options</td>
+              <td class="text-center">Limited exports (basic PDF)</td>
+              <td class="text-center">Standard exports (CSV/PDF)</td>
+              <td class="text-center">Custom exports & API access</td>
+              <td class="text-center">Full API suite & custom integrations</td>
+            </tr>
+            <tr>
+              <td>Third-party Integrations</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center cross">✗</td>
+              <td class="text-center">Slack/Teams integration</td>
+              <td class="text-center">Custom integrations (Salesforce, HubSpot, etc.)</td>
+            </tr>
+            
+            <tr class="feature-category">
+              <td colspan="5"><strong>Support & Service</strong></td>
+            </tr>
+            <tr>
+              <td>Support Level</td>
+              <td class="text-center">Community forum</td>
+              <td class="text-center">Email support</td>
+              <td class="text-center">Priority email support</td>
+              <td class="text-center">Dedicated success manager</td>
+            </tr>
+            <tr>
+              <td>Onboarding</td>
+              <td class="text-center">Self-serve</td>
+              <td class="text-center">Email onboarding</td>
+              <td class="text-center">1-hour setup call</td>
+              <td class="text-center">Full implementation support</td>
+            </tr>
+            
+            <tr class="feature-category">
+              <td colspan="5"><strong>Usage Limits</strong></td>
+            </tr>
+            <tr>
+              <td>Monthly Queries</td>
+              <td class="text-center">10 analyses</td>
+              <td class="text-center">100 analyses</td>
+              <td class="text-center">500 analyses</td>
+              <td class="text-center">Unlimited</td>
+            </tr>
+            <tr>
+              <td>User Seats</td>
+              <td class="text-center">1 user</td>
+              <td class="text-center">3 users</td>
+              <td class="text-center">10 users</td>
+              <td class="text-center">Unlimited users</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Usage-Based Add-ons -->
+  <section class="section-padding bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 gradient-text text-elegant-bold">
+          Usage-Based Add-ons
+        </h2>
+        <p class="text-base text-brand-darkgray text-elegant max-w-3xl mx-auto">
+          Scale your plan with additional features and capacity as your business grows.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="elegant-card p-6 rounded-xl text-center">
+          <div class="w-12 h-12 bg-brand-green/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="users" class="w-6 h-6 text-brand-green"></i>
+          </div>
+          <h3 class="font-semibold text-brand-navy mb-2">Additional Competitors</h3>
+          <p class="text-2xl font-bold text-brand-green mb-2">$50<span class="text-sm text-brand-gray">/month</span></p>
+          <p class="text-sm text-brand-gray">Per additional competitor (Professional plan)</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl text-center">
+          <div class="w-12 h-12 bg-brand-green/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="user-plus" class="w-6 h-6 text-brand-green"></i>
+          </div>
+          <h3 class="font-semibold text-brand-navy mb-2">Extra User Seats</h3>
+          <p class="text-2xl font-bold text-brand-green mb-2">$25<span class="text-sm text-brand-gray">/month</span></p>
+          <p class="text-sm text-brand-gray">Per additional user</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl text-center">
+          <div class="w-12 h-12 bg-brand-green/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="database" class="w-6 h-6 text-brand-green"></i>
+          </div>
+          <h3 class="font-semibold text-brand-navy mb-2">Premium Data Sources</h3>
+          <p class="text-2xl font-bold text-brand-green mb-2">$100<span class="text-sm text-brand-gray">/month</span></p>
+          <p class="text-sm text-brand-gray">Enhanced demographic data</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl text-center">
+          <div class="w-12 h-12 bg-brand-green/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <i data-lucide="file-text" class="w-6 h-6 text-brand-green"></i>
+          </div>
+          <h3 class="font-semibold text-brand-navy mb-2">Custom Reports</h3>
+          <p class="text-2xl font-bold text-brand-green mb-2">$200<span class="text-sm text-brand-gray">/month</span></p>
+          <p class="text-sm text-brand-gray">Automated monthly reports</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section-padding bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4 gradient-text text-elegant-bold">
+          Frequently Asked Questions
+        </h2>
+      </div>
+
+      <div class="space-y-6">
+        <div class="elegant-card p-6 rounded-xl">
+          <h3 class="font-semibold text-brand-navy mb-2">Can I change my plan anytime?</h3>
+          <p class="text-brand-darkgray text-sm">Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate any billing differences.</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl">
+          <h3 class="font-semibold text-brand-navy mb-2">What's included in the free trial?</h3>
+          <p class="text-brand-darkgray text-sm">All paid plans come with a 30-day free trial. You'll have full access to all features in your chosen plan with no credit card required.</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl">
+          <h3 class="font-semibold text-brand-navy mb-2">Do you offer annual discounts?</h3>
+          <p class="text-brand-darkgray text-sm">Yes! Save 20% when you pay annually on any paid plan. This discount is automatically applied at checkout.</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl">
+          <h3 class="font-semibold text-brand-navy mb-2">What happens if I exceed my monthly query limit?</h3>
+          <p class="text-brand-darkgray text-sm">We'll notify you when you're approaching your limit. You can upgrade your plan or purchase additional queries as needed.</p>
+        </div>
+
+        <div class="elegant-card p-6 rounded-xl">
+          <h3 class="font-semibold text-brand-navy mb-2">Is there a money-back guarantee?</h3>
+          <p class="text-brand-darkgray text-sm">Yes, we offer a 30-day money-back guarantee on all paid plans. If you're not satisfied, we'll refund your payment in full.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section-padding bg-gradient-to-r from-brand-green to-brand-blue text-white">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4 text-elegant-bold">Ready to Accelerate Your Growth?</h2>
+      <p class="text-base mb-6 text-elegant">Start with our free plan or book a demo to see how Realyn can transform your marketing strategy.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="modern-button bg-white text-brand-navy px-8 py-3 rounded-xl font-semibold hover:bg-yellow-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Try Free Plan
+        </a>
+        <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="modern-button bg-transparent border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-brand-navy transition-all duration-300 transform hover:scale-105">
+          Book a Demo
+        </a>
+      </div>
+    </div>
+    
+    <div class="mt-6 border-t border-white/20 pt-8 text-center">
+      <p class="text-white/70 text-sm text-elegant">
+        © 2024 Realyn.ai. All rights reserved.
+      </p>
+    </div>
+  </section>
+
+  <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

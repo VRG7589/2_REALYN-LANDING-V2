@@ -359,6 +359,38 @@
     #pagination-controls button {
       color: #1f2937 !important;
     }
+
+    /* Premium table cell styles - make data illegible */
+    .premium-cell {
+      position: relative;
+      background: linear-gradient(135deg, rgba(156, 163, 175, 0.15) 0%, rgba(107, 114, 128, 0.15) 100%);
+      color: #9ca3af !important; /* Very light gray text */
+      filter: blur(1px);
+      opacity: 0.6;
+      transition: all 0.3s ease;
+    }
+
+    .premium-cell:hover {
+      filter: blur(0.5px);
+      opacity: 0.8;
+      background: linear-gradient(135deg, rgba(156, 163, 175, 0.25) 0%, rgba(107, 114, 128, 0.25) 100%);
+    }
+
+    /* Premium column headers - make them slightly dimmed but readable */
+    .premium-header {
+      color: #6b7280 !important; /* Dimmed but readable */
+      position: relative;
+    }
+
+    .premium-header::after {
+      content: "🔒";
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      opacity: 0.7;
+    }
   </style>
 </head>
 
@@ -373,9 +405,11 @@
       </a>
         
       <div class="hidden md:flex space-x-6 text-sm font-medium">
+        <!--
         <a href="#how-it-works" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">How It Works</a>
         <a href="#insights" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Insights</a>
-        <a href="#pricing" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Pricing</a>
+        -->
+        <a href="/pricing" class="nav-link text-brand-darkgray hover:text-brand-green transition-all duration-300 rounded-md px-3 py-2 hover:bg-gray-50">Pricing</a> 
         <a href="https://calendly.com/vivek-reddy-goli/15mins-intro-with-vivek" target="_blank" class="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-brand-green/90 transition-all duration-300 text-sm">Book a Demo</a>
         <a href="https://opsplanner-v1-client.onrender.com" target="_blank" class="border border-brand-green text-brand-green px-4 py-2 rounded-lg hover:bg-brand-green/10 transition-all duration-300 text-sm">Login</a>
       </div>
@@ -503,14 +537,14 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="text-sm text-white/80">Market Size:</span>
-                  <span class="text-lg font-bold text-green-300" id="market-size">$0</span>
+                  <span class="text-lg font-bold text-yellow-300" id="market-size">$0</span>
                 </div>
               </div>
             </div>
             <!-- Interesting Fact Line -->
             <div class="mt-2">
               <p class="text-sm text-white/90">
-                <span class="font-semibold text-blue-300">Interesting Fact:</span> 
+                <i data-lucide="lightbulb" class="w-4 h-4 inline mr-1 text-yellow-300"></i><span class="font-semibold text-yellow-300">Just</span> 
                 <span id="top50-zip-count">0</span> zips cover 50% of this population.
               </p>
             </div>
@@ -570,7 +604,7 @@
                 <!-- ZIP Codes Table -->
                 <div class="bg-white rounded-lg border border-gray-200 overflow-hidden flex-1 flex flex-col">
                   <div class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
-                    <h4 class="font-semibold text-gray-700">Top 1000 ZIP Codes by Target Audience Concentration</h4>
+                    <h4 class="font-semibold text-gray-700">Top 100 ZIP Codes by Target Audience Concentration</h4>
                   </div>
                   
                   <!-- Table Loading State -->
@@ -600,9 +634,23 @@
                           <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">ZIP Code</th>
                           <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs">City, State</th>
                           <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Target Population</th>
-                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Total Population</th>
-                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Concentration %</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">% of Total Population</th>
                           <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs">Market Potential</th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs premium-header">
+                            Market Share
+                          </th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs premium-header">
+                            Competition Index
+                          </th>
+                          <th class="px-4 py-2 text-left font-semibold text-gray-700 text-xs premium-header">
+                            Largest Competitor
+                          </th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs premium-header">
+                            Avg CPM
+                          </th>
+                          <th class="px-4 py-2 text-right font-semibold text-gray-700 text-xs premium-header">
+                            Opportunity Score
+                          </th>
                         </tr>
                       </thead>
                       <tbody id="zip-table-body" class="divide-y divide-gray-200">
@@ -617,7 +665,7 @@
                       <span class="text-sm text-gray-700">Showing 10 rows per page</span>
                     </div>
                     <div class="flex items-center space-x-2">
-                      <span id="pagination-info" class="text-sm text-gray-700">Showing 1-10 of 1000</span>
+                      <span id="pagination-info" class="text-sm text-gray-700">Showing 1-10 of 100</span>
                       <div class="flex space-x-1">
                         <button id="prev-page" class="px-2 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                           Previous
@@ -853,6 +901,13 @@
 </html>
 
   <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    });
+
     // Slide functionality
     function showSlide(slideId) {
       // Reset all tab styles
