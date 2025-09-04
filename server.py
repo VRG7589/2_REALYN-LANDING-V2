@@ -221,6 +221,10 @@ def index():
 def pricing():
     return render_template('pricing.html')
 
+@app.route('/tools')
+def tools():
+    return render_template('tools.html')
+
 @app.route('/api/health')
 def health_check():
     return jsonify({"status": "healthy", "message": "Server is running"})
